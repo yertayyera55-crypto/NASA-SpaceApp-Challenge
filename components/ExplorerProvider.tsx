@@ -38,7 +38,10 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   }, [planet, chosen]);
 
   async function selectPlanet(next: Planet, origin?: { x: number; y: number }, replayTransition = false, onCovered?: () => Promise<void> | void) {
-    if (next === planet && chosen && !replayTransition) return;
+    if (next === planet && chosen && !replayTransition) {
+      await onCovered?.();
+      return;
+    }
     const root = document.documentElement;
     const x = origin?.x ?? window.innerWidth / 2;
     const y = origin?.y ?? window.innerHeight / 2;

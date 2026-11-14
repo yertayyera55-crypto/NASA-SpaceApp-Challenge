@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
 import { MarsTerrain } from "@/components/effects/MarsTerrain";
 import { ElectricLogoOverlay } from "@/components/effects/ElectricLogoOverlay";
@@ -32,25 +32,21 @@ export default function SelectPage() {
   const [moving, setMoving] = useState(false);
   const [electricPlanet, setElectricPlanet] = useState<Planet | null>(null);
 
+  useEffect(() => {
+    setMoving(false);
+    setElectricPlanet(null);
+  }, []);
+
   async function choose(target: Planet, element: HTMLElement) {
     if (moving) return;
     setMoving(true);
     setElectricPlanet(target);
 
-    // Let the ElectricLogo animation charge and arc for 1.25s
-    await new Promise(resolve => setTimeout(resolve, 1250));
+    // Let the ElectricLogo animation display and arc
+    await new Promise(resolve => setTimeout(resolve, 950));
 
-    await selectPlanet(target, undefined, false, () => new Promise<void>(resolve => {
-      const observer = new MutationObserver(() => {
-        if (document.querySelector(".explore-page")) finish();
-      });
-      const timer = window.setTimeout(finish, 4000);
-      function finish() { observer.disconnect(); window.clearTimeout(timer); resolve(); }
-      observer.observe(document.body, { childList: true, subtree: true });
-      router.push("/explore");
-      if (document.querySelector(".explore-page")) finish();
-    }));
-    setElectricPlanet(null);
+    await selectPlanet(target, undefined, true);
+    router.push("/explore");
   }
 
   return (
