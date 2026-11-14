@@ -6,13 +6,18 @@ A NASA Space Apps Challenge 2026 project. The application guides a researcher fr
 
 Node.js 20.9+ is required.
 
+**macOS:** Open [`Запустить сайт.command`](./Запустить%20сайт.command) in Finder with a double-click. The launcher installs dependencies on first use, starts the local server, and opens the site in your browser. Keep its Terminal window open while using the site; press Control+C there to stop it. On later days, double-click the same file again. If port 3000 is busy, the launcher uses the next available port through 3010 and shows the exact address in Terminal.
+
+If macOS blocks the file the first time, Control-click it and choose **Open**. Node.js must be installed separately from [nodejs.org](https://nodejs.org/).
+
+**Terminal (macOS, Windows, Linux):**
+
 ```bash
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:3000`. The Gemini key is optional; manual filters and NASA POWER search work without it. Set `GEMINI_API_KEY` in `.env.local` to enable AI query interpretation. Do not commit `.env.local`.
+Open `http://localhost:3000`. The Gemini key is optional; manual filters and NASA POWER search work without it. If you need AI query interpretation, copy `.env.example` to `.env.local` and set `GEMINI_API_KEY` there. Do not commit `.env.local`.
 
 Build with `npm run typecheck` and `npm run build`. With the app running, execute `python3 scripts/smoke.py` (requires Playwright with Chromium). Set `BASE_URL` if the server uses another port.
 
