@@ -22,17 +22,17 @@ export default function SelectPage() {
   const reduce = useReducedMotion();
   const { selectPlanet } = useExplorer();
   const [moving, setMoving] = useState(false);
-  const [charge, setCharge] = useState<{ planet: Planet; x: number; y: number; size: number } | null>(null);
+  const [charge, setCharge] = useState<{ x: number; y: number; size: number } | null>(null);
   async function choose(target: Planet, element: HTMLElement) {
     if (moving) return;
     setMoving(true);
     const rect = element.querySelector(".world-globe")?.getBoundingClientRect() ?? element.getBoundingClientRect();
     const origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    if (!reduce) {
-      setCharge({ planet: target, ...origin, size: rect.width });
+    if (!reduce && target === "moon") {
+      setCharge({ ...origin, size: rect.width });
       await new Promise(resolve => setTimeout(resolve, 450));
     }
-    await selectPlanet(target, origin);
+    await selectPlanet(target, origin, true);
     setCharge(null);
     router.push("/explore");
   }

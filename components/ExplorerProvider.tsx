@@ -7,7 +7,7 @@ import { DEFAULT_CRITERIA } from "@/lib/types";
 
 type ExplorerState = {
   planet: Planet;
-  selectPlanet: (planet: Planet, origin?: { x: number; y: number }) => Promise<void>;
+  selectPlanet: (planet: Planet, origin?: { x: number; y: number }, replayTransition?: boolean) => Promise<void>;
   point: PlanetPoint | null;
   setPoint: (point: PlanetPoint | null) => void;
   criteria: Criteria;
@@ -41,8 +41,8 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
     if (chosen) window.localStorage.setItem("pae-planet", planet);
   }, [planet, chosen]);
 
-  async function selectPlanet(next: Planet, origin?: { x: number; y: number }) {
-    if (next === planet && chosen) return;
+  async function selectPlanet(next: Planet, origin?: { x: number; y: number }, replayTransition = false) {
+    if (next === planet && chosen && !replayTransition) return;
     const root = document.documentElement;
     const x = origin?.x ?? window.innerWidth / 2;
     const y = origin?.y ?? window.innerHeight / 2;
