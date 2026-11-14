@@ -6,6 +6,7 @@ import { ArrowRight, Check, ChevronDown, Database, Info, LoaderCircle, Rocket, R
 import { useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
 import { PlanetMap } from "@/components/PlanetMap";
+import { MarsTerrain } from "@/components/effects/MarsTerrain";
 import { DEFAULT_CRITERIA } from "@/lib/types";
 import type { Criteria, Planet } from "@/lib/types";
 
@@ -60,6 +61,7 @@ export default function ExplorePage() {
     await selectPlanet(next, { x: box.left + box.width / 2, y: box.top + box.height / 2 });
   }
   return <main className="explore-page">
+    {planet === "mars" && <MarsTerrain className="mars-terrain-explore" />}
     <div className="explore-heading"><div><p className="overline">EXPLORATION / {planet.toUpperCase()}</p><h1>{planet === "mars" ? "Mars" : "Moon"} surface explorer</h1><p>Choose a location on the map, then define the conditions for an Earth field site.</p></div><div className="planet-tabs"><button className={planet === "mars" ? "active" : ""} onClick={event => switchWorld("mars", event.currentTarget)}>Mars</button><button className={planet === "moon" ? "active" : ""} onClick={event => switchWorld("moon", event.currentTarget)}>Moon</button></div></div>
     <div className="explorer-layout">
       <section className="map-panel" aria-label={`${planet} geographic explorer`}><PlanetMap planet={planet} point={point} onPoint={setPoint} /><div className="map-underbar"><span><span className="legend-swatch" /> Selected point</span><span>No verified numerical planetary layers connected · no matching regions drawn</span><span>Planetocentric latitude / east longitude</span></div></section>

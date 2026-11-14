@@ -24,6 +24,8 @@ Build with `npm run typecheck` and `npm run build`. With the app running, execut
 4. `/results` ranks five Earth sampling points and shows imagery, measurements, scoring components and limitations.
 5. `/methodology` documents sources, units, periods and gaps; `/about` explains the project.
 
+The Mars atmosphere uses a decorative React Bits Topography contour field. Selecting a planet traces its silhouette with the React Bits ElectricLogo effect, then reveals the destination theme in a wave of orange or cyan. These effects are disabled when reduced motion is requested. See `components/effects/ATTRIBUTION.md` for component provenance.
+
 ## Scientific scope
 
 - Mars surface cartography is the NASA Mars Trek Viking global color mosaic; Moon cartography is the NASA SVS LROC WAC color map. Both are 2048 × 1024 px display textures. They are not numerical temperature, elevation or geology layers.

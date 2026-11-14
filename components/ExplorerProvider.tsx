@@ -44,8 +44,13 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   async function selectPlanet(next: Planet, origin?: { x: number; y: number }) {
     if (next === planet && chosen) return;
     const root = document.documentElement;
-    root.style.setProperty("--wave-x", `${origin?.x ?? window.innerWidth / 2}px`);
-    root.style.setProperty("--wave-y", `${origin?.y ?? window.innerHeight / 2}px`);
+    const x = origin?.x ?? window.innerWidth / 2;
+    const y = origin?.y ?? window.innerHeight / 2;
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)) + 60;
+    root.style.setProperty("--wave-x", `${x}px`);
+    root.style.setProperty("--wave-y", `${y}px`);
+    root.style.setProperty("--wave-radius", `${radius}px`);
+    root.style.setProperty("--wave-color", next === "mars" ? "#f47b31" : "#69cfff");
     const update = () => {
       flushSync(() => { setPlanet(next); setChosen(true); setPoint(null); });
       root.dataset.planet = next;

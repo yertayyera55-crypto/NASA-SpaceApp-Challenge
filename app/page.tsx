@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { MarsTerrain } from "@/components/effects/MarsTerrain";
 
 const PlanetGlobe = dynamic(() => import("@/components/PlanetGlobe"), { ssr: false });
 
@@ -11,6 +12,7 @@ export default function HomePage() {
   const reduce = useReducedMotion();
   return <main className="home-page space-stage">
     <div className="stars stars-near" aria-hidden="true" /><div className="stars stars-far" aria-hidden="true" />
+    <MarsTerrain className="mars-terrain-home" />
     <div className="home-copy">
       <motion.p className="overline" initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6 }}>NASA SPACE APPS CHALLENGE · 2026</motion.p>
       <motion.h1 initial={reduce ? false : { opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, delay: .1 }}>Explore Other Worlds.<br /><em>Discover Their Earthly Twins.</em></motion.h1>
