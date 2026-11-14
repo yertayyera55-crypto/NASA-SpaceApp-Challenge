@@ -63,7 +63,7 @@ export function ExplorerProvider({ children }: { children: React.ReactNode }) {
       ], { duration: 950, easing: "cubic-bezier(.42,0,.58,1)", fill: "forwards" }).finished;
       update();
       await onCovered?.();
-      await wave.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 420, easing: "ease-out", fill: "forwards" }).finished;
+      await wave.animate([{ opacity: 0.58 }, { opacity: 0 }], { duration: 420, easing: "ease-out", fill: "forwards" }).finished;
     } finally {
       wave.remove();
     }

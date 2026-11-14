@@ -20,11 +20,11 @@ Build with `npm run typecheck` and `npm run build`. With the app running, execut
 
 1. `/` is the cinematic introduction.
 2. `/select` presents only Mars and Moon, with a radial wave theme transition from the chosen planet.
-3. `/explore` shows a pan/zoom equirectangular map and manual or optional AI-assisted criteria.
+3. `/explore` shows a centered, zoomable equirectangular map with clickable coordinates and manual or optional AI-assisted criteria.
 4. `/results` ranks five Earth sampling points and shows imagery, measurements, scoring components and limitations.
 5. `/methodology` documents sources, units, periods and gaps; `/about` explains the project.
 
-The Mars atmosphere uses a decorative React Bits Topography contour field. Selecting either planet starts a radial wave from that globe: rust orange for Mars, pale lunar gray for Moon. The animated contour field and transitions are disabled when reduced motion is requested. See `components/effects/ATTRIBUTION.md` for component provenance.
+The Mars atmosphere uses a decorative React Bits Topography contour field. Selecting either planet starts a translucent radial wave from that globe: rust orange for Mars, pale lunar gray for Moon. The animated contour field and transitions are disabled when reduced motion is requested. See `components/effects/ATTRIBUTION.md` for component provenance.
 
 ## Scientific scope
 

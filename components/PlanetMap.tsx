@@ -5,13 +5,13 @@ import { Crosshair, Layers3, Minus, Plus, RotateCcw } from "lucide-react";
 import type { Planet, PlanetPoint } from "@/lib/types";
 
 type Layer = "surface" | "geology";
-type Transform = { zoom: number; dx: number; dy: number };
+type Transform = { zoom: number };
 
 export function PlanetMap({ planet, point, onPoint }: { planet: Planet; point: PlanetPoint | null; onPoint: (point: PlanetPoint) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const images = useRef<{ surface?: HTMLImageElement; geology?: HTMLImageElement }>({});
-  const transform = useRef<Transform>({ zoom: 1, dx: 0, dy: 0 });
-  const drag = useRef<{ x: number; y: number; dx: number; dy: number; moved: boolean } | null>(null);
+  const transform = useRef<Transform>({ zoom: 1 });
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
   const [layer, setLayer] = useState<Layer>("surface");
   const [zoomLabel, setZoomLabel] = useState(1);
   const [ready, setReady] = useState(false);
@@ -24,7 +24,7 @@ export function PlanetMap({ planet, point, onPoint }: { planet: Planet; point: P
     const fit = Math.min(width / 2048, height / 1024);
     const widthOnCanvas = 2048 * fit * transform.current.zoom;
     const heightOnCanvas = 1024 * fit * transform.current.zoom;
-    return { width, height, x: (width - widthOnCanvas) / 2 + transform.current.dx, y: (height - heightOnCanvas) / 2 + transform.current.dy, mapWidth: widthOnCanvas, mapHeight: heightOnCanvas };
+    return { width, height, x: (width - widthOnCanvas) / 2, y: (height - heightOnCanvas) / 2, mapWidth: widthOnCanvas, mapHeight: heightOnCanvas };
   }, []);
 
   const draw = useCallback(() => {
@@ -77,7 +77,7 @@ export function PlanetMap({ planet, point, onPoint }: { planet: Planet; point: P
   }, [geometry, layer, planet, point]);
 
   useEffect(() => {
-    transform.current = { zoom: 1, dx: 0, dy: 0 };
+    transform.current = { zoom: 1 };
     setZoomLabel(1); setLayer("surface"); setReady(false); setGeologyReady(false);
     const surface = new Image();
     const geology = new Image();
@@ -94,30 +94,25 @@ export function PlanetMap({ planet, point, onPoint }: { planet: Planet; point: P
     return () => observer.disconnect();
   }, [draw]);
 
-  function zoom(factor: number) {
+  const zoom = useCallback((factor: number) => {
     transform.current.zoom = Math.max(1, Math.min(5, transform.current.zoom * factor));
-    if (transform.current.zoom === 1) { transform.current.dx = 0; transform.current.dy = 0; }
     setZoomLabel(transform.current.zoom);
     draw();
-  }
-  function onPointerDown(event: React.PointerEvent<HTMLCanvasElement>) {
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { x: event.clientX, y: event.clientY, dx: transform.current.dx, dy: transform.current.dy, moved: false };
-  }
-  function onPointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
-    if (!drag.current) return;
-    const deltaX = event.clientX - drag.current.x, deltaY = event.clientY - drag.current.y;
-    if (Math.abs(deltaX) + Math.abs(deltaY) > 5) drag.current.moved = true;
-    if (drag.current.moved) {
-      transform.current.dx = drag.current.dx + deltaX;
-      transform.current.dy = drag.current.dy + deltaY;
-      draw();
-    }
-  }
-  function onPointerUp(event: React.PointerEvent<HTMLCanvasElement>) {
-    const wasDrag = drag.current?.moved;
-    drag.current = null;
-    if (wasDrag) return;
+  }, [draw]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      zoom(event.deltaY < 0 ? 1.18 : 1 / 1.18);
+    };
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    return () => canvas.removeEventListener("wheel", onWheel);
+  }, [zoom]);
+  function onMapClick(event: React.MouseEvent<HTMLCanvasElement>) {
+    const start = pointerStart.current;
+    pointerStart.current = null;
+    if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5) return;
     const g = geometry();
     if (!g) return;
     const box = event.currentTarget.getBoundingClientRect();
@@ -127,11 +122,11 @@ export function PlanetMap({ planet, point, onPoint }: { planet: Planet; point: P
     onPoint({ lat: Math.round((90 - v * 180) * 100) / 100, lon: Math.round((-180 + u * 360) * 100) / 100 });
   }
   return <div className="map-root">
-    <canvas ref={canvasRef} className="planet-map-canvas" aria-label={`${planet} equirectangular surface map. Click to select coordinates; drag to pan.`} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onWheel={event => { event.preventDefault(); zoom(event.deltaY < 0 ? 1.18 : 1 / 1.18); }} />
+    <canvas ref={canvasRef} className="planet-map-canvas" aria-label={`${planet} equirectangular surface map. Click to select coordinates; use the scroll wheel or controls to zoom.`} onPointerDown={event => { pointerStart.current = { x: event.clientX, y: event.clientY }; }} onClick={onMapClick} />
     {!ready && <div className="map-loading">Loading {planet} map…</div>}
     <div className="map-top-left"><span className="live-dot" /> {planet === "mars" ? "MARS" : "MOON"} / EQUIRECTANGULAR MAP <span className="map-resolution">2048 × 1024 px display texture</span></div>
     <div className="map-top-right"><button className={layer === "surface" ? "active" : ""} onClick={() => setLayer("surface")}>Surface</button><button className={layer === "geology" ? "active" : ""} onClick={() => setLayer("geology")}><Layers3 size={14} /> Geology</button></div>
-    <div className="map-controls"><button onClick={() => zoom(1.4)} aria-label="Zoom in"><Plus size={18} /></button><button onClick={() => zoom(1 / 1.4)} aria-label="Zoom out"><Minus size={18} /></button><button onClick={() => { transform.current = { zoom: 1, dx: 0, dy: 0 }; setZoomLabel(1); draw(); }} aria-label="Reset map view"><RotateCcw size={16} /></button></div>
+    <div className="map-controls"><button onClick={() => zoom(1.4)} aria-label="Zoom in"><Plus size={18} /></button><button onClick={() => zoom(1 / 1.4)} aria-label="Zoom out"><Minus size={18} /></button><button onClick={() => { transform.current = { zoom: 1 }; setZoomLabel(1); draw(); }} aria-label="Reset map view"><RotateCcw size={16} /></button></div>
     <div className="map-crosshair"><Crosshair size={17} /><span>{point ? `${point.lat.toFixed(2)}° LAT  /  ${point.lon.toFixed(2)}° E` : "CLICK MAP TO SELECT A POINT"}</span></div>
     <div className="map-credit">{layer === "surface" ? planet === "mars" ? "NASA Mars Trek · Viking color mosaic" : "NASA SVS · LROC WAC color mosaic" : "Project-provided geology texture · visual reference only; legend unverified"}</div>
   </div>;
