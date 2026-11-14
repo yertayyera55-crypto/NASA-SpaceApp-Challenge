@@ -1,12 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import type { AnalogResult, Criteria, Planet, PlanetPoint } from "@/lib/types";
 import { DEFAULT_CRITERIA } from "@/lib/types";
 
 type ExplorerState = {
   planet: Planet;
-  setPlanet: (planet: Planet) => void;
+  selectPlanet: (planet: Planet, origin?: { x: number; y: number }) => Promise<void>;
   point: PlanetPoint | null;
   setPoint: (point: PlanetPoint | null) => void;
   criteria: Criteria;
@@ -19,14 +20,53 @@ type ExplorerState = {
 
 const ExplorerContext = createContext<ExplorerState | null>(null);
 
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+};
+
 export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   const [planet, setPlanet] = useState<Planet>("mars");
+  const [chosen, setChosen] = useState(false);
   const [point, setPoint] = useState<PlanetPoint | null>(null);
   const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
   const [results, setResults] = useState<AnalogResult[]>([]);
   const [searchNote, setSearchNote] = useState("");
-  useEffect(() => { document.documentElement.dataset.planet = planet; }, [planet]);
-  return <ExplorerContext.Provider value={{ planet, setPlanet, point, setPoint, criteria, setCriteria, results, setResults, searchNote, setSearchNote }}>{children}</ExplorerContext.Provider>;
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("pae-planet");
+    if (saved === "mars" || saved === "moon") { setPlanet(saved); setChosen(true); }
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.planet = chosen ? planet : "neutral";
+    if (chosen) window.localStorage.setItem("pae-planet", planet);
+  }, [planet, chosen]);
+
+  async function selectPlanet(next: Planet, origin?: { x: number; y: number }) {
+    if (next === planet && chosen) return;
+    const root = document.documentElement;
+    root.style.setProperty("--wave-x", `${origin?.x ?? window.innerWidth / 2}px`);
+    root.style.setProperty("--wave-y", `${origin?.y ?? window.innerHeight / 2}px`);
+    const update = () => {
+      flushSync(() => { setPlanet(next); setChosen(true); setPoint(null); });
+      root.dataset.planet = next;
+    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { update(); return; }
+    const doc = document as ViewTransitionDocument;
+    if (doc.startViewTransition) {
+      await doc.startViewTransition(update).finished;
+    } else {
+      const wave = document.createElement("div");
+      wave.className = `theme-wave theme-wave-${next}`;
+      wave.style.left = `${origin?.x ?? window.innerWidth / 2}px`;
+      wave.style.top = `${origin?.y ?? window.innerHeight / 2}px`;
+      document.body.append(wave);
+      await wave.animate([{ transform: "translate(-50%, -50%) scale(0)" }, { transform: "translate(-50%, -50%) scale(1)" }], { duration: 1150, easing: "cubic-bezier(.22,1,.36,1)" }).finished;
+      update();
+      wave.remove();
+    }
+  }
+
+  return <ExplorerContext.Provider value={{ planet, selectPlanet, point, setPoint, criteria, setCriteria, results, setResults, searchNote, setSearchNote }}>{children}</ExplorerContext.Provider>;
 }
 
 export function useExplorer() {
