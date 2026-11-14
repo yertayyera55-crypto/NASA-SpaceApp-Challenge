@@ -24,7 +24,7 @@ Build with `npm run typecheck` and `npm run build`. With the app running, execut
 4. `/results` ranks five Earth sampling points and shows imagery, measurements, scoring components and limitations.
 5. `/methodology` documents sources, units, periods and gaps; `/about` explains the project.
 
-The Mars atmosphere uses a decorative React Bits Topography contour field. Selecting Mars starts an orange wave directly; selecting Moon first traces its silhouette with the React Bits ElectricLogo effect, then reveals a cyan wave. These effects are disabled when reduced motion is requested. See `components/effects/ATTRIBUTION.md` for component provenance.
+The Mars atmosphere uses a decorative React Bits Topography contour field. Selecting either planet starts a radial wave from that globe: rust orange for Mars, pale lunar gray for Moon. The animated contour field and transitions are disabled when reduced motion is requested. See `components/effects/ATTRIBUTION.md` for component provenance.
 
 ## Scientific scope
 

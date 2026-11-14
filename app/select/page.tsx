@@ -7,7 +7,6 @@ import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
 import { MarsTerrain } from "@/components/effects/MarsTerrain";
-import { PlanetCharge } from "@/components/effects/PlanetCharge";
 import type { Planet } from "@/lib/types";
 
 const PlanetGlobe = dynamic(() => import("@/components/PlanetGlobe"), { ssr: false });
@@ -22,19 +21,21 @@ export default function SelectPage() {
   const reduce = useReducedMotion();
   const { selectPlanet } = useExplorer();
   const [moving, setMoving] = useState(false);
-  const [charge, setCharge] = useState<{ x: number; y: number; size: number } | null>(null);
   async function choose(target: Planet, element: HTMLElement) {
     if (moving) return;
     setMoving(true);
     const rect = element.querySelector(".world-globe")?.getBoundingClientRect() ?? element.getBoundingClientRect();
     const origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    if (!reduce && target === "moon") {
-      setCharge({ ...origin, size: rect.width });
-      await new Promise(resolve => setTimeout(resolve, 450));
-    }
-    await selectPlanet(target, origin, true);
-    setCharge(null);
-    router.push("/explore");
+    await selectPlanet(target, origin, true, () => new Promise<void>(resolve => {
+      const observer = new MutationObserver(() => {
+        if (document.querySelector(".explore-page")) finish();
+      });
+      const timer = window.setTimeout(finish, 4000);
+      function finish() { observer.disconnect(); window.clearTimeout(timer); resolve(); }
+      observer.observe(document.body, { childList: true, subtree: true });
+      router.push("/explore");
+      if (document.querySelector(".explore-page")) finish();
+    }));
   }
   return <main className="select-page space-stage">
     <div className="stars stars-near" aria-hidden="true" /><div className="stars stars-far" aria-hidden="true" />
@@ -47,7 +48,6 @@ export default function SelectPage() {
       </motion.button>)}
     </div>
     <div className="select-horizon" aria-hidden="true" />
-    {!reduce && <PlanetCharge charge={charge} />}
     <p className="select-footnote">NASA imagery for navigation · scientific data coverage shown in the explorer</p>
   </main>;
 }
