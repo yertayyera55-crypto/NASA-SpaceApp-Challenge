@@ -1,0 +1,66 @@
+[
+  {
+    "id": "volcanic-flow-morphology",
+    "query": "Map surface shapes of a recent fissure eruption to interpret young volcanic plains.",
+    "category": "geology",
+    "objective": {"category":"geology","traits":["basalt"]},
+    "site_group": "holuhraun",
+    "reference": "https://pubs.usgs.gov/publication/70275623"
+  },
+  {
+    "id": "upland-polar-freeze",
+    "query": "Find an upland polar desert weather station for sustained cold and subsurface ice stability.",
+    "category": "temperature",
+    "objective": {"category":"temperature","preferences":[{"feature":"coldest_month_mean_air_temperature_c","direction":"lower"}]},
+    "site_group": "dry-valleys",
+    "reference": "https://ntrs.nasa.gov/citations/20100003844"
+  },
+  {
+    "id": "temporary-wetting",
+    "query": "Study how brief wetting affects signs of life in extremely desiccated surface soils.",
+    "category": "biology",
+    "objective": {"category":"biology","preferences":[{"feature":"mean_precipitation_mm_day","direction":"lower"}]},
+    "site_group": "atacama",
+    "reference": "https://pubmed.ncbi.nlm.nih.gov/29483268/"
+  },
+  {
+    "id": "crew-geology-traverse",
+    "query": "Practice an extended crewed traverse with geologic stops and remote support.",
+    "category": "operations",
+    "objective": {"category":"operations","traits":["rover_field_test","eva_training"]},
+    "site_group": "northern-arizona",
+    "reference": "https://ntrs.nasa.gov/citations/20110008008"
+  },
+  {
+    "id": "basalt-cavity-mapping",
+    "query": "Capture interior geometry and collapse openings in a basaltic conduit with laser scanning.",
+    "category": "subsurface",
+    "objective": {"category":"subsurface","traits":["lava_caves"]},
+    "site_group": "craters-of-the-moon",
+    "reference": "https://home.nps.gov/crmo/learn/education/site-tour-3.htm"
+  },
+  {
+    "id": "shield-basalt-comparison",
+    "query": "Choose young shield volcano outcrops with fresh and altered lava for field inspection.",
+    "category": "geology",
+    "objective": {"category":"geology","traits":["basalt"]},
+    "site_group": "kilauea",
+    "reference": "https://pubs.usgs.gov/pp/1056/report.pdf"
+  },
+  {
+    "id": "wind-abrasion-dunes",
+    "query": "Compare abrasive sand transport in a dry basin with exposed dune surfaces.",
+    "category": "atmosphere",
+    "objective": {"category":"atmosphere","traits":["aeolian_landforms"]},
+    "site_group": "death-valley",
+    "reference": "https://onlinelibrary.wiley.com/doi/10.1111/sed.13233"
+  },
+  {
+    "id": "incised-arid-valley",
+    "query": "Find dissected terrain near a dry Central Asian river canyon and nearby desert landscapes.",
+    "category": "terrain",
+    "objective": {"category":"terrain","preferences":[{"feature":"slope_p90_deg","direction":"higher"}]},
+    "site_group": "charyn",
+    "reference": "https://www.unesco.org/en/mab/charyn"
+  }
+]

@@ -1,0 +1,484 @@
+[
+  {
+    "id": "holuhraun",
+    "name": "Holuhraun lava field",
+    "country": "Iceland",
+    "point": {
+      "lat": 64.91335,
+      "lon": -16.76735
+    },
+    "coordinate_note": "Approximate WGS84 field point from the grainflow study near the northern flow edge. The RAVEN case represents the wider lava field.",
+    "status": "documented_analog",
+    "site_group": "holuhraun",
+    "source_ids": [
+      "holuhraun_sand",
+      "raven"
+    ],
+    "observations": [
+      {
+        "trait": "basalt",
+        "detail": "RAVEN sampled two flows and identified primary basalt compositions.",
+        "source_id": "raven"
+      },
+      {
+        "trait": "rover_field_test",
+        "detail": "RAVEN conducted a rover-only mission and a separate aircraft mission.",
+        "source_id": "raven"
+      },
+      {
+        "trait": "mobility_hazards",
+        "detail": "Mission planning used local topography to assess trafficability across lava and sand.",
+        "source_id": "raven"
+      },
+      {
+        "trait": "aeolian_landforms",
+        "detail": "Field investigators documented windblown sand banked against a lava margin and observed grainflows.",
+        "source_id": "holuhraun_sand"
+      }
+    ],
+    "limitations": [
+      "Survey the specific route and obtain field access. Lava roughness varies over short distances."
+    ]
+  },
+  {
+    "id": "krafla",
+    "name": "Krafla / Leirhnjúkur lava field",
+    "country": "Iceland",
+    "point": {
+      "lat": 65.73,
+      "lon": -16.78
+    },
+    "coordinate_note": "Existing repository sampling point for the Krafla area. The paper maps the specific lava-cave survey area separately.",
+    "status": "documented_analog",
+    "site_group": "krafla",
+    "source_ids": [
+      "repo_sites",
+      "krafla_caves"
+    ],
+    "observations": [
+      {
+        "trait": "basalt",
+        "detail": "Investigators documented the lava field as basaltic.",
+        "source_id": "krafla_caves"
+      },
+      {
+        "trait": "lava_caves",
+        "detail": "UAV imaging and surface models documented small volcanic vent caves in Leirhnjúkur lava.",
+        "source_id": "krafla_caves"
+      }
+    ],
+    "limitations": [
+      "Use study maps for actual cave entrances and obtain site-specific safety and access assessments."
+    ]
+  },
+  {
+    "id": "yungay",
+    "name": "Yungay hyperarid soil site",
+    "country": "Chile",
+    "point": {
+      "lat": -24.0693333,
+      "lon": -69.8663333
+    },
+    "coordinate_note": "Soil location reported in Valdivia-Silva et al. and converted from degrees, minutes and seconds. Other Yungay campaigns used different sampling points.",
+    "status": "documented_analog",
+    "site_group": "atacama",
+    "source_ids": [
+      "yungay_coords",
+      "yungay_soils"
+    ],
+    "observations": [
+      {
+        "trait": "aridity",
+        "detail": "The soil study sampled the hyperarid core of the Atacama.",
+        "source_id": "yungay_soils"
+      },
+      {
+        "trait": "low_biomass_soil",
+        "detail": "The original study found very low detectable organics and few culturable bacteria in some samples.",
+        "source_id": "yungay_soils"
+      }
+    ],
+    "limitations": [
+      "Biological detections depend on technique, microhabitat, and sampling conditions."
+    ]
+  },
+  {
+    "id": "atacama",
+    "name": "Atacama / San Pedro screening point",
+    "country": "Chile",
+    "point": {
+      "lat": -22.91,
+      "lon": -68.2
+    },
+    "coordinate_note": "Existing regional sample point near San Pedro de Atacama.",
+    "status": "screening_candidate",
+    "site_group": "atacama",
+    "source_ids": [
+      "repo_sites",
+      "lita"
+    ],
+    "observations": [],
+    "limitations": [
+      "Life in the Atacama documents regional campaigns. Study observations are not assigned to the San Pedro coordinate."
+    ]
+  },
+  {
+    "id": "university-valley",
+    "name": "University Valley weather station",
+    "country": "Antarctica",
+    "point": {
+      "lat": -77.86215,
+      "lon": 160.7101
+    },
+    "coordinate_note": "Published weather-station coordinate converted from decimal minutes.",
+    "status": "documented_analog",
+    "site_group": "dry-valleys",
+    "source_ids": [
+      "university",
+      "university_coords"
+    ],
+    "observations": [
+      {
+        "trait": "polar_cold",
+        "detail": "The station study reports mean near-surface air temperature of −23.4 °C.",
+        "source_id": "university"
+      },
+      {
+        "trait": "dry_permafrost",
+        "detail": "The study documented dry permafrost above ice-cemented ground.",
+        "source_id": "university"
+      },
+      {
+        "trait": "ground_ice",
+        "detail": "Ice occurred beneath dry permafrost, with station and other valley sites showing different ice depths.",
+        "source_id": "university_coords"
+      }
+    ],
+    "limitations": [
+      "Field evidence describes an upland station and valley floor. Antarctic permitting and local slope or ice surveys are required for deployment."
+    ]
+  },
+  {
+    "id": "dry-valleys",
+    "name": "McMurdo Dry Valleys regional point",
+    "country": "Antarctica",
+    "point": {
+      "lat": -77.5,
+      "lon": 163.0
+    },
+    "coordinate_note": "Existing region-level sample point, distinct from University Valley station.",
+    "status": "screening_candidate",
+    "site_group": "dry-valleys",
+    "source_ids": [
+      "repo_sites",
+      "university"
+    ],
+    "observations": [],
+    "limitations": [
+      "Observations from University Valley are not assigned to this regional coordinate."
+    ]
+  },
+  {
+    "id": "haughton",
+    "name": "Haughton-Mars Project Research Station",
+    "country": "Canada",
+    "point": {
+      "lat": 75.4333333,
+      "lon": -89.8666667
+    },
+    "coordinate_note": "Reported research station coordinate at the northwest rim. The NASA technical report covers the wider crater and Devon Island.",
+    "status": "documented_analog",
+    "site_group": "haughton",
+    "source_ids": [
+      "haughton_station",
+      "haughton"
+    ],
+    "observations": [
+      {
+        "trait": "rover_field_test",
+        "detail": "NASA documented field work with analog rovers as part of surface exploration studies.",
+        "source_id": "haughton"
+      },
+      {
+        "trait": "mobility_hazards",
+        "detail": "NASA described an impact crater setting with rocky polar desert terrain and varied landforms.",
+        "source_id": "haughton"
+      }
+    ],
+    "limitations": [
+      "Site access is seasonal and remote. Past operations provide no guarantee of current infrastructure or permits."
+    ]
+  },
+  {
+    "id": "cinder-lake",
+    "name": "Cinder Lake Crater Field vicinity",
+    "country": "United States",
+    "point": {
+      "lat": 35.30657,
+      "lon": -111.50482
+    },
+    "coordinate_note": "Midpoint of the published USGS UAS DEM bounding box. The particular crater test sites are documented separately.",
+    "status": "documented_analog",
+    "site_group": "northern-arizona",
+    "source_ids": [
+      "cinder",
+      "cinder_training",
+      "cinder_dem"
+    ],
+    "observations": [
+      {
+        "trait": "eva_training",
+        "detail": "USGS documents Apollo astronauts practicing sample collection at the constructed crater field.",
+        "source_id": "cinder_training"
+      }
+    ],
+    "limitations": [
+      "The crater field was constructed. Consult the georeferenced USGS UAS product for exact crater locations."
+    ]
+  },
+  {
+    "id": "ustyurt",
+    "name": "Ustyurt Plateau / Mangystau",
+    "country": "Kazakhstan",
+    "point": {
+      "lat": 43.42,
+      "lon": 54.08
+    },
+    "coordinate_note": "Existing repository sampling point. Check local geomorphology before treating the point as representative of the plateau.",
+    "status": "screening_candidate",
+    "site_group": "ustyurt",
+    "source_ids": [
+      "repo_sites"
+    ],
+    "observations": [],
+    "limitations": [
+      "Candidate for screened follow-up. Local lithology, access and test infrastructure remain unverified."
+    ]
+  },
+  {
+    "id": "betpak",
+    "name": "Betpak-Dala",
+    "country": "Kazakhstan",
+    "point": {
+      "lat": 46.0,
+      "lon": 70.0
+    },
+    "coordinate_note": "Existing repository sampling point in the named desert region.",
+    "status": "screening_candidate",
+    "site_group": "betpak",
+    "source_ids": [
+      "repo_sites"
+    ],
+    "observations": [],
+    "limitations": [
+      "Candidate for screened follow-up. Site-level geological and access evidence is pending."
+    ]
+  },
+  {
+    "id": "oyyl",
+    "name": "Oyyl dune field vicinity",
+    "country": "Kazakhstan",
+    "point": {
+      "lat": 49.0,
+      "lon": 54.8
+    },
+    "coordinate_note": "NASA photo-center coordinate, rounded to tenths of a degree.",
+    "status": "screening_candidate",
+    "site_group": "oyyl",
+    "source_ids": [
+      "oyyl",
+      "oyyl_coords"
+    ],
+    "observations": [
+      {
+        "trait": "aeolian_landforms",
+        "detail": "NASA imagery and interpretation describe sand dunes adjacent to a floodplain, with variable vegetation.",
+        "source_id": "oyyl"
+      }
+    ],
+    "limitations": [
+      "Imagery documents dunes across a wider floodplain. Vegetation and local wind conditions affect test design."
+    ]
+  },
+  {
+    "id": "aktau",
+    "name": "Aktau Mountains sedimentary section",
+    "country": "Kazakhstan",
+    "point": {
+      "lat": 44.00266111111111,
+      "lon": 79.24915
+    },
+    "coordinate_note": "Study-area location reported in the Aktau sedimentology paper and converted from degrees, minutes and seconds.",
+    "status": "screening_candidate",
+    "site_group": "aktau",
+    "source_ids": [
+      "aktau",
+      "turan"
+    ],
+    "observations": [
+      {
+        "trait": "sedimentary_outcrops",
+        "detail": "The study mapped and sampled fine-grained Miocene floodplain and mudflat deposits in the Ili Basin.",
+        "source_id": "aktau"
+      }
+    ],
+    "limitations": [
+      "The source is a terrestrial sedimentology study. Coordinate, access and suitability for a planetary-style test require field confirmation."
+    ]
+  },
+  {
+    "id": "black-point",
+    "name": "Black Point lava flow test area",
+    "country": "United States",
+    "point": {
+      "lat": 35.6929,
+      "lon": -111.46
+    },
+    "coordinate_note": "Rounded test-area coordinate printed on the NASA Desert RATS report map.",
+    "status": "documented_analog",
+    "site_group": "northern-arizona",
+    "source_ids": [
+      "desert_rats"
+    ],
+    "observations": [
+      {
+        "trait": "rover_field_test",
+        "detail": "NASA tested two rover configurations on extended lunar surface simulations.",
+        "source_id": "desert_rats"
+      }
+    ],
+    "limitations": [
+      "The cited coordinate identifies an area used in 2008. Current access and traverses require verification."
+    ]
+  },
+  {
+    "id": "sp-mountain",
+    "name": "S P Mountain / JETT3 vicinity",
+    "country": "United States",
+    "point": {
+      "lat": 35.58313888888889,
+      "lon": -111.6336388888889
+    },
+    "coordinate_note": "USGS field guide stop 4 GPS point. NASA's JETT3 traverse took place east of the cone.",
+    "status": "documented_analog",
+    "site_group": "northern-arizona",
+    "source_ids": [
+      "sp_field_guide",
+      "jett3"
+    ],
+    "observations": [
+      {
+        "trait": "eva_training",
+        "detail": "NASA conducted Artemis field EVAs east of S P Crater with a remote support team.",
+        "source_id": "jett3"
+      }
+    ],
+    "limitations": [
+      "Regional point for catalog display. It is not an EVA station or the JETT3 traverse location."
+    ]
+  },
+  {
+    "id": "indian-tunnel",
+    "name": "Indian Tunnel, Craters of the Moon",
+    "country": "United States",
+    "point": {
+      "lat": 43.44,
+      "lon": -113.53
+    },
+    "coordinate_note": "Approximate site coordinate in the NASA lidar study.",
+    "status": "documented_analog",
+    "site_group": "craters-of-the-moon",
+    "source_ids": [
+      "indian_tunnel"
+    ],
+    "observations": [
+      {
+        "trait": "lava_caves",
+        "detail": "NASA used terrestrial lidar to survey the tube, collapse pits and adjacent surface.",
+        "source_id": "indian_tunnel"
+      }
+    ],
+    "limitations": [
+      "The study characterized a specific lava tube. Check current access and separate cave safety requirements."
+    ]
+  },
+  {
+    "id": "mauna-ulu",
+    "name": "Mauna Ulu volcanic field vicinity",
+    "country": "United States",
+    "point": {
+      "lat": 19.3678716,
+      "lon": -155.2024267
+    },
+    "coordinate_note": "Named volcanic feature coordinate in the Hawaiʻi geographic names record. BASALT sampled multiple stations.",
+    "status": "documented_analog",
+    "site_group": "kilauea",
+    "source_ids": [
+      "mauna_basalt",
+      "mauna_coord"
+    ],
+    "observations": [],
+    "limitations": [
+      "Study-scale point. Local alteration and access vary across the flow."
+    ]
+  },
+  {
+    "id": "ibex-dunes",
+    "name": "Ibex Dune Field vicinity",
+    "country": "United States",
+    "point": {
+      "lat": 35.7,
+      "lon": -116.38
+    },
+    "coordinate_note": "Rounded dune-field location used for coarse product sampling.",
+    "status": "documented_analog",
+    "site_group": "death-valley",
+    "source_ids": [
+      "ibex_nasa"
+    ],
+    "observations": [],
+    "limitations": [
+      "Screening point represents the dune vicinity. Ambient wind, migration and sand transport are different quantities."
+    ]
+  },
+  {
+    "id": "meteor-crater",
+    "name": "Meteor Crater vicinity",
+    "country": "United States",
+    "point": {
+      "lat": 35.03333333333333,
+      "lon": -111.01666666666667
+    },
+    "coordinate_note": "Rounded minute coordinates from USGS Circular 1300. The impact-melt samples did not have individual coordinates.",
+    "status": "documented_analog",
+    "site_group": "northern-arizona",
+    "source_ids": [
+      "meteor_melts",
+      "meteor_coords"
+    ],
+    "observations": [],
+    "limitations": [
+      "The point is regional. The reported sample chemistry has no point-coordinate attribution."
+    ]
+  },
+  {
+    "id": "charyn",
+    "name": "Charyn Canyon visitor-area screening point",
+    "country": "Kazakhstan",
+    "point": {
+      "lat": 43.352925,
+      "lon": 79.068167
+    },
+    "coordinate_note": "Government guide coordinate used for screening. The published sediment section was sampled separately.",
+    "status": "screening_candidate",
+    "site_group": "charyn",
+    "source_ids": [
+      "charyn_strata",
+      "charyn_coordinate"
+    ],
+    "observations": [],
+    "limitations": [
+      "Terrestrial sediment study and regional proxy. Confirm the section location, route, access and lithology in the field."
+    ]
+  }
+]

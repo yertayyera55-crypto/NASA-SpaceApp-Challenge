@@ -1,0 +1,5 @@
+-r requirements.txt
+rasterio>=1.4.4,<2
+numpy>=2,<3
+pyproj>=3.7,<4
+shapely>=2.1,<3

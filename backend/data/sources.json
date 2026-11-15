@@ -1,0 +1,314 @@
+[
+  {
+    "id": "power",
+    "title": "NASA POWER climatology API (MERRA-2)",
+    "url": "https://power.larc.nasa.gov/docs/services/api/temporal/climatology/",
+    "kind": "product",
+    "access": "Numerical point and regional climatology."
+  },
+  {
+    "id": "srtm",
+    "title": "NASA SRTM 1 arc-second via OpenTopoData",
+    "url": "https://www.opentopodata.org/datasets/srtm/",
+    "kind": "product",
+    "access": "Numerical elevation samples. Mission product DOI 10.5067/MEaSUREs/SRTM/SRTMGL1.003."
+  },
+  {
+    "id": "worldcover",
+    "title": "ESA WorldCover 2021 v200 Product User Manual",
+    "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/docs/WorldCover_PUM_V2.0.pdf",
+    "kind": "product",
+    "access": "Categorical land cover COG, 10 m nominal.",
+    "attribution": "© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium."
+  },
+  {
+    "id": "era5",
+    "title": "Copernicus ERA5-Land hourly point time series",
+    "url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land-timeseries",
+    "kind": "product",
+    "access": "Numerical time series via authenticated CDS or locally downloaded CSV."
+  },
+  {
+    "id": "mola",
+    "title": "USGS Mars MGS MOLA DEM 463 m",
+    "url": "https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m",
+    "kind": "product",
+    "access": "Single-band numerical DEM."
+  },
+  {
+    "id": "mola_pds",
+    "title": "NASA PDS MGS MOLA gridded topography archive",
+    "url": "https://pds-geosciences.wustl.edu/missions/mgs/megdr.html",
+    "kind": "product",
+    "access": "Numerical PDS products with product-specific projection and scaling."
+  },
+  {
+    "id": "lola",
+    "title": "NASA LOLA Adjusted South Polar DEMs",
+    "url": "https://pgda.gsfc.nasa.gov/products/90",
+    "kind": "product",
+    "access": "Numerical LOLA regional south-polar COGs, in meters."
+  },
+  {
+    "id": "lola_pds",
+    "title": "NASA PDS LRO LOLA archive",
+    "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+    "kind": "product",
+    "access": "Numerical PDS products with product-specific projection and scaling."
+  },
+  {
+    "id": "usgs_mars_geology",
+    "title": "USGS SIM 3292 Geologic Map of Mars",
+    "url": "https://pubs.usgs.gov/sim/3292/",
+    "kind": "product",
+    "access": "Vector geologic units at 1:20,000,000 and separately published graphics."
+  },
+  {
+    "id": "usgs_moon_geology",
+    "title": "USGS Unified Geologic Map of the Moon GIS v2",
+    "url": "https://astrogeology.usgs.gov/search/map/Moon/Geology/Unified_Geologic_Map_of_the_Moon_GIS_v2/",
+    "kind": "product",
+    "access": "Vector geologic units at 1:5,000,000."
+  },
+  {
+    "id": "mars_display",
+    "title": "NASA Mars Trek Viking imagery",
+    "url": "https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars",
+    "kind": "visualization",
+    "access": "Repository Viking color texture is display imagery."
+  },
+  {
+    "id": "moon_display",
+    "title": "NASA SVS CGI Moon Kit",
+    "url": "https://svs.gsfc.nasa.gov/4720/",
+    "kind": "visualization",
+    "access": "Repository LROC WAC color texture is display imagery. NASA also publishes separate numerical LOLA files."
+  },
+  {
+    "id": "gibs",
+    "title": "NASA GIBS Blue Marble imagery",
+    "url": "https://nasa-gibs.github.io/gibs-api-docs/python-usage/",
+    "kind": "visualization",
+    "access": "JPEG imagery from the existing WMS route."
+  },
+  {
+    "id": "repo_sites",
+    "title": "Pre-existing Planetary Analog Explorer sample coordinates",
+    "url": "https://github.com/yertayyera55-crypto/NASA-SpaceApp-Challenge/blob/main/lib/analogs.ts",
+    "kind": "repository",
+    "access": "Coordinate provenance only."
+  },
+  {
+    "id": "raven",
+    "title": "Comparing Rover and Helicopter Planetary Mission Architectures in a Mars Analog Setting in Iceland",
+    "url": "https://doi.org/10.3847/psj/ad55f4",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "holuhraun_sand",
+    "title": "An Aeolian Grainflow Model for Martian Recurring Slope Lineae",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8243843/",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "krafla_caves",
+    "title": "Small Lava Caves as Possible Exploratory Targets on Mars",
+    "url": "https://www.mdpi.com/2072-4292/12/12/1970",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "yungay_soils",
+    "title": "Mars-Like Soils in the Atacama Desert, Chile, and the Dry Limit of Microbial Life",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/14605363/",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "yungay_coords",
+    "title": "Hyperarid soils of Pampas de La Joya as a new Mars-like soil analog",
+    "url": "https://www.sciencedirect.com/science/article/abs/pii/S0016703711000251",
+    "kind": "study",
+    "access": "Cites the Yungay soil sampling location."
+  },
+  {
+    "id": "lita",
+    "title": "Life in the Atacama: A scoring system for habitability and the robotic exploration for life",
+    "url": "https://doi.org/10.1029/2006JG000321",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "university",
+    "title": "Climate and energy balance of the ground in University Valley, Antarctica",
+    "url": "https://doi.org/10.1017/S0954102022000025",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "university_coords",
+    "title": "Summer snow determines the depth to ice-cemented ground under dry permafrost in Antarctica",
+    "url": "https://www.cambridge.org/core/journals/antarctic-science/article/summer-snow-determines-the-depth-to-icecemented-ground-under-dry-permafrost-in-antarctica/5B2E97EBA4C91035CAFCECC234A532A0",
+    "kind": "study",
+    "access": null
+  },
+  {
+    "id": "haughton",
+    "title": "Haughton-Mars Project Expedition 2005: Interplanetary Supply Chain Management & Logistics Architectures",
+    "url": "https://ntrs.nasa.gov/citations/20060013129",
+    "kind": "technical_report",
+    "access": null
+  },
+  {
+    "id": "haughton_station",
+    "title": "Haughton-Mars Project Research Station coordinates",
+    "url": "https://www.marsinstitute.no/hmp",
+    "kind": "observation",
+    "access": null
+  },
+  {
+    "id": "cinder",
+    "title": "USGS Cinder Lake crater field location test",
+    "url": "https://pubs.usgs.gov/of/1967/0007/report.pdf",
+    "kind": "technical_report",
+    "access": null
+  },
+  {
+    "id": "cinder_training",
+    "title": "USGS Terrestrial Analogs: Using Earth to Study Space",
+    "url": "https://www.usgs.gov/science/science-explorer/planetary-science/terrestrial-analogs",
+    "kind": "observation",
+    "access": null
+  },
+  {
+    "id": "cinder_dem",
+    "title": "USGS Cinder Lake Crater Field Digital Elevation Models, 2023 and 2024",
+    "url": "https://doi.org/10.5066/P13W5FTZ",
+    "kind": "product",
+    "access": null
+  },
+  {
+    "id": "oyyl",
+    "title": "NASA Earth Observatory Oyyl Dune Field, Kazakhstan",
+    "url": "https://science.nasa.gov/earth/earth-observatory/oyyl-dune-field-kazakhstan/",
+    "kind": "observation",
+    "access": null
+  },
+  {
+    "id": "oyyl_coords",
+    "title": "NASA astronaut photograph ISS067-E-133142",
+    "url": "https://esrs.jsc.nasa.gov/Collections/EarthFromSpace/printinfo.pl?PHOTO=ISS067-E-133142",
+    "kind": "observation",
+    "access": null
+  },
+  {
+    "id": "turan",
+    "title": "UNESCO Cold Winter Deserts of Turan nomination dossier",
+    "url": "https://whc.unesco.org/document/192658",
+    "kind": "technical_report",
+    "access": null
+  },
+  {
+    "id": "copernicus_dem",
+    "title": "Copernicus DEM GLO-30 public COG",
+    "url": "https://copernicus-dem-30m.s3.amazonaws.com/readme.html",
+    "kind": "product",
+    "access": "Numerical digital surface model via regional byte-range access.",
+    "attribution": "Produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved."
+  },
+  {
+    "id": "aktau",
+    "title": "Climatically forced moisture supply, sediment flux and pedogenesis in Miocene mudflat deposits of south-east Kazakhstan",
+    "url": "https://doi.org/10.1002/dep2.34",
+    "kind": "study",
+    "access": "Terrestrial sedimentology study and sample-section coordinates."
+  },
+  {
+    "id": "desert_rats",
+    "title": "Desert Research and Technology Studies 2008 Report",
+    "url": "https://ntrs.nasa.gov/citations/20090012335",
+    "kind": "technical_report",
+    "access": "Primary field report."
+  },
+  {
+    "id": "jett3",
+    "title": "JETT3: A Holistic, Integrated Analog for Artemis Lunar Surface Exploration",
+    "url": "https://ntrs.nasa.gov/citations/20230000146",
+    "kind": "technical_report",
+    "access": "Primary field report."
+  },
+  {
+    "id": "sp_field_guide",
+    "title": "A Geologic Field Guide to S P Mountain and its Lava Flow",
+    "url": "https://pubs.usgs.gov/publication/ofr20211072",
+    "kind": "technical_report",
+    "access": "Primary field report."
+  },
+  {
+    "id": "indian_tunnel",
+    "title": "Planetary Exploration of Lava Tubes with Lidar at Craters of the Moon, Idaho",
+    "url": "https://ntrs.nasa.gov/citations/20170002387",
+    "kind": "technical_report",
+    "access": "Primary field report."
+  },
+  {
+    "id": "glim",
+    "title": "Hartmann and Moosdorf, Global Lithological Map v1.0, 0.5° grid",
+    "url": "https://doi.pangaea.de/10.1594/PANGAEA.788537",
+    "kind": "product",
+    "access": "Categorical terrestrial lithology grid with 0.5 degree cells.",
+    "attribution": "Hartmann, Jens and Moosdorf, Nils (2012), Global Lithological Map Database v1.0 (gridded to 0.5° spatial resolution), PANGAEA, CC BY 3.0."
+  },
+  {
+    "id": "mauna_basalt",
+    "title": "Basaltic Terrains in Idaho and Hawai‘i as Planetary Analogs for Mars Geology and Astrobiology",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6442300/",
+    "kind": "study"
+  },
+  {
+    "id": "mauna_coord",
+    "title": "Hawaiʻi Board on Geographic Names, Maunaulu feature record",
+    "url": "https://files.hawaii.gov/dbedt/op/gis/bgn/Binder-20210504.pdf",
+    "kind": "product"
+  },
+  {
+    "id": "ibex_nasa",
+    "title": "The Ibex Dune Field of Death Valley National Park: Characterization and Assessment for Use as A Martian Analog",
+    "url": "https://ntrs.nasa.gov/citations/20260000452",
+    "kind": "study"
+  },
+  {
+    "id": "meteor_melts",
+    "title": "Characterizing Meteor Crater impact melts through geochemistry and textural analysis",
+    "url": "https://pubs.usgs.gov/publication/ofr20241062/full",
+    "kind": "technical_report"
+  },
+  {
+    "id": "meteor_coords",
+    "title": "About the Geologic Map in the National Atlas of the United States of America, USGS Circular 1300",
+    "url": "https://pubs.usgs.gov/circ/1300/pdf/Cir1300_508.pdf",
+    "kind": "product"
+  },
+  {
+    "id": "charyn_strata",
+    "title": "Central Asian modulation of Northern Hemisphere moisture transfer over the Late Cenozoic",
+    "url": "https://doi.org/10.1038/s43247-021-00173-z",
+    "kind": "study"
+  },
+  {
+    "id": "charyn_coordinate",
+    "title": "Kazakhstan government visitor guide, Charyn coordinate",
+    "url": "https://www.gov.kz/api/v1/public/assets/2025/1/24/ea72d8e888236aaafa2bcdded028d28f_original.66547176.pdf",
+    "kind": "product"
+  },
+  {
+    "id": "copernicus_glo90",
+    "title": "Copernicus DEM GLO-90 public COG",
+    "url": "https://copernicus-dem-90m.s3.amazonaws.com/readme.html",
+    "kind": "product",
+    "access": "Public regional COG overviews of the Copernicus digital surface model.",
+    "attribution": "Produced using Copernicus WorldDEM-90 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved."
+  }
+]

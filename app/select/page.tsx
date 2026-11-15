@@ -2,97 +2,33 @@
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
-import { MarsTerrain } from "@/components/effects/MarsTerrain";
-import { ElectricLogoOverlay } from "@/components/effects/ElectricLogoOverlay";
 import type { Planet } from "@/lib/types";
 
 const PlanetGlobe = dynamic(() => import("@/components/PlanetGlobe"), { ssr: false });
-
-const worlds: { id: Planet; name: string; description: string }[] = [
-  {
-    id: "mars",
-    name: "Mars",
-    description: "A cold, hyper-arid world with basaltic rock, iron oxide dust, and ancient riverbeds.",
-  },
-  {
-    id: "moon",
-    name: "Moon",
-    description: "An airless, high-vacuum environment with extreme thermal shifts and impact regolith.",
-  },
-];
+const worlds = [
+  { id: "mars", name: "Mars", description: "Jezero, Gale and Elysium Planitia" },
+  { id: "moon", name: "Moon", description: "Haworth, Nobile and a south polar strip" },
+] as const;
 
 export default function SelectPage() {
   const router = useRouter();
-  const reduce = useReducedMotion();
   const { selectPlanet } = useExplorer();
   const [moving, setMoving] = useState(false);
-  const [electricPlanet, setElectricPlanet] = useState<Planet | null>(null);
-
-  useEffect(() => {
-    setMoving(false);
-    setElectricPlanet(null);
-  }, []);
-
   async function choose(target: Planet, element: HTMLElement) {
     if (moving) return;
     setMoving(true);
-    setElectricPlanet(target);
-
-    // Let the ElectricLogo animation display and arc
-    await new Promise(resolve => setTimeout(resolve, 950));
-
-    await selectPlanet(target, undefined, true);
-    router.push("/explore");
+    const box = element.querySelector(".world-image")?.getBoundingClientRect() ?? element.getBoundingClientRect();
+    await selectPlanet(target, { x: box.x + box.width / 2, y: box.y + box.height / 2 }, () => router.push("/explore"));
   }
-
-  return (
-    <main className="select-page space-stage">
-      <MarsTerrain className="mars-terrain-select" />
-
-      <ElectricLogoOverlay planet={electricPlanet ?? "mars"} visible={!!electricPlanet} />
-
-      <motion.div
-        className="select-heading"
-        initial={reduce ? false : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <p className="overline">TARGET SELECTION</p>
-        <h1>Choose Your Target World</h1>
-        <p>Select an environment to explore its surface maps and find matching Earth analog sites.</p>
-      </motion.div>
-
-      <div className="worlds">
-        {worlds.map((world, index) => (
-          <motion.button
-            key={world.id}
-            type="button"
-            className={`world world-${world.id}`}
-            disabled={moving}
-            onClick={event => choose(world.id, event.currentTarget)}
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
-          >
-            <span className="world-globe">
-              <PlanetGlobe planet={world.id} />
-            </span>
-            <span className="world-caption">
-              <span>
-                <strong>{world.name}</strong>
-                <small>{world.description}</small>
-              </span>
-              <span className="world-arrow">
-                <ArrowRight size={18} strokeWidth={2} />
-              </span>
-            </span>
-          </motion.button>
-        ))}
-      </div>
-    </main>
-  );
+  return <main className="world-select">
+    <div className="landing-sky" aria-hidden="true" />
+    <header><h1>Choose a world</h1><p>Browse measured terrain on Mars or the Moon.</p></header>
+    <div className="world-options">{worlds.map(world => <button key={world.id} type="button" className={`world-option sphere-${world.id}`} disabled={moving} onClick={event => choose(world.id, event.currentTarget)}>
+      <span className="world-image" aria-hidden="true"><PlanetGlobe planet={world.id} /></span>
+      <span className="world-label"><span><strong>{world.name}</strong><small>{world.description}</small></span><ArrowRight size={22} /></span>
+    </button>)}</div>
+  </main>;
 }

@@ -1,361 +1,191 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Crosshair, Layers3, MapPin, Minus, Plus, RotateCcw } from "lucide-react";
-import { useExplorer } from "@/components/ExplorerProvider";
-import { CANDIDATES } from "@/lib/analogs";
+import { useEffect, useRef, useState } from "react";
+import { Minus, Plus, RotateCcw } from "lucide-react";
+import { cellKey, coordinates, METRICS, type Bounds, type PlanetCell } from "@/lib/science-api";
 import type { Planet, PlanetPoint } from "@/lib/types";
 
-type Layer = "surface" | "geology";
-type Transform = { zoom: number };
+type Survey = { id: string; name: string; center: PlanetPoint; width: number; height: number };
+export const SURVEYS: Record<Planet, Survey[]> = {
+  mars: [
+    { id: "jezero", name: "Jezero crater", center: { lat: 18.44, lon: 77.56 }, width: 1.05, height: 1 },
+    { id: "gale", name: "Gale crater", center: { lat: -4.69, lon: 137.41 }, width: 1.05, height: 1 },
+    { id: "elysium", name: "Elysium Planitia", center: { lat: 4.48, lon: 135.72 }, width: 1.05, height: 1 },
+  ],
+  moon: [
+    { id: "haworth", name: "Haworth vicinity", center: { lat: -86.76, lon: -22.6 }, width: 5.9, height: 0.33 },
+    { id: "nobile", name: "Nobile vicinity", center: { lat: -85.44, lon: 37.36 }, width: 3.7, height: 0.33 },
+    { id: "polar", name: "South polar strip", center: { lat: -84, lon: 0 }, width: 0.65, height: 0.06 },
+  ],
+};
 
-export function PlanetMap({
-  planet,
-  point,
-  onPoint,
-}: {
-  planet: Planet;
-  point: PlanetPoint | null;
-  onPoint: (point: PlanetPoint) => void;
-}) {
-  const { results, criteria } = useExplorer();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const images = useRef<{ surface?: HTMLImageElement; geology?: HTMLImageElement }>({});
-  const transform = useRef<Transform>({ zoom: 1 });
-  const pointerStart = useRef<{ x: number; y: number } | null>(null);
-  const [layer, setLayer] = useState<Layer>("surface");
-  const [showAnalogs, setShowAnalogs] = useState(true);
-  const [zoomLabel, setZoomLabel] = useState(1);
-  const [ready, setReady] = useState(false);
-  const [geologyReady, setGeologyReady] = useState(false);
+export function inSurvey(cell: PlanetCell, survey: Survey) {
+  return Math.abs(cell.point.lon - survey.center.lon) < survey.width / 2
+    && Math.abs(cell.point.lat - survey.center.lat) < survey.height / 2;
+}
 
-  const geometry = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return null;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const fit = Math.min(width / 2048, height / 1024);
-    const widthOnCanvas = 2048 * fit * transform.current.zoom;
-    const heightOnCanvas = 1024 * fit * transform.current.zoom;
-    return {
-      width,
-      height,
-      x: (width - widthOnCanvas) / 2,
-      y: (height - heightOnCanvas) / 2,
-      mapWidth: widthOnCanvas,
-      mapHeight: heightOnCanvas,
-    };
-  }, []);
+export function PlanetMap({ planet, cells, matchCounts, activeFilters, selected, surveyId, onSurvey, onSelect }:
+  { planet: Planet; cells: PlanetCell[]; matchCounts: Map<string, number>; activeFilters: number; selected: PlanetCell | null;
+    surveyId: string; onSurvey: (survey: string) => void; onSelect: (cell: PlanetCell) => void }) {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [base, setBase] = useState<HTMLImageElement | null>(null);
+  const [layer, setLayer] = useState(surveyId ? "slope_p90_deg" : "surface");
+  const [zoom, setZoom] = useState(1);
+  const survey = SURVEYS[planet].find(item => item.id === surveyId);
+  const projection = useRef<((lon: number, lat: number) => [number, number]) | null>(null);
+  const visibleCells = survey ? cells.filter(cell => inSurvey(cell, survey)) : cells;
+  const metric = METRICS.find(item => item.id === layer);
+  const valuesByCell = new Map(visibleCells.flatMap(cell => {
+    const value = cell.measurements.find(item => item.feature === metric?.id)?.value;
+    return value === undefined ? [] : [[cellKey(cell), value] as const];
+  }));
+  const values = Array.from(valuesByCell.values());
+  const minimum = values.length ? Math.min(...values) : null;
+  const maximum = values.length ? Math.max(...values) : null;
+  const imagePath = `/images/${planet}${layer === "geology" ? "-geology" : ""}.jpg`;
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    const image = images.current.surface;
-    const g = geometry();
-    if (!canvas || !g || !image) return;
+  useEffect(() => {
+    const image = new Image();
+    image.onload = () => setBase(image);
+    image.src = imagePath;
+    return () => { image.onload = null; };
+  }, [imagePath]);
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const pixelWidth = Math.round(g.width * dpr);
-    const pixelHeight = Math.round(g.height * dpr);
-
-    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-      canvas.width = pixelWidth;
-      canvas.height = pixelHeight;
-    }
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = "#050c15";
-    ctx.fillRect(0, 0, g.width, g.height);
-    ctx.drawImage(image, g.x, g.y, g.mapWidth, g.mapHeight);
-
-    if (layer === "geology" && images.current.geology) {
-      ctx.globalAlpha = 0.82;
-      ctx.drawImage(images.current.geology, g.x, g.y, g.mapWidth, g.mapHeight);
-      ctx.globalAlpha = 1;
-    }
-
-    // Coordinate grid lines
-    ctx.strokeStyle = "rgba(225, 239, 249, 0.2)";
-    ctx.fillStyle = "rgba(230, 242, 252, 0.75)";
-    ctx.lineWidth = 1;
-    ctx.font = "11px ui-monospace, SFMono-Regular, monospace";
-
-    for (let lon = -150; lon <= 150; lon += 30) {
-      const x = g.x + ((lon + 180) / 360) * g.mapWidth;
-      if (x < 0 || x > g.width) continue;
+  useEffect(() => {
+    const element = canvas.current;
+    if (!element) return;
+    const drawing = element.getContext("2d");
+    if (!drawing) return;
+    function draw() {
+      if (!element || !drawing) return;
+      const ctx = drawing;
+      const { clientWidth: width, clientHeight: height } = element;
+      if (!width || !height) return;
+      const pixelRatio = Math.min(window.devicePixelRatio, 2);
+      const style = getComputedStyle(element);
+      const color = (name: string) => style.getPropertyValue(name).trim();
+      element.width = Math.round(width * pixelRatio);
+      element.height = Math.round(height * pixelRatio);
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.fillStyle = color("--map-void");
+      ctx.fillRect(0, 0, width, height);
+      const margins = survey ? 25 : 28;
+      const fit = Math.min((width - margins * 2) / 360, (height - margins * 2) / 180);
+      const horizontal = survey ? (width - margins * 2) * zoom / survey.width : fit * zoom;
+      const vertical = survey ? (height - margins * 2) * zoom / survey.height : fit * zoom;
+      const center = survey?.center ?? { lat: 0, lon: 0 };
+      const project = (lon: number, lat: number): [number, number] =>
+        [width / 2 + (lon - center.lon) * horizontal, height / 2 - (lat - center.lat) * vertical];
+      projection.current = project;
+      const [mapX, mapY] = project(-180, 90);
+      const [mapEndX, mapEndY] = project(180, -90);
+      ctx.save();
       ctx.beginPath();
-      ctx.moveTo(x, Math.max(0, g.y));
-      ctx.lineTo(x, Math.min(g.height, g.y + g.mapHeight));
-      ctx.stroke();
-      if (g.y + 13 > 0 && g.y + 13 < g.height) ctx.fillText(`${lon}°`, x + 5, g.y + 14);
-    }
-
-    for (let lat = -60; lat <= 60; lat += 30) {
-      const y = g.y + ((90 - lat) / 180) * g.mapHeight;
-      if (y < 0 || y > g.height) continue;
-      ctx.beginPath();
-      ctx.moveTo(Math.max(0, g.x), y);
-      ctx.lineTo(Math.min(g.width, g.x + g.mapWidth), y);
-      ctx.stroke();
-      if (g.x + 7 > 0 && g.x + 7 < g.width) ctx.fillText(`${lat}°`, g.x + 7, y - 5);
-    }
-
-    // Highlight Similar Earth Analog Places on Map (Clean Cartographic Markers - No AI Laser Slop)
-    const sitesToHighlight = results.length > 0
-      ? results
-      : CANDIDATES;
-
-    const markerColor = planet === "mars" ? "#f05a28" : "#38bdf8";
-    const markerColorMuted = planet === "mars" ? "rgba(240, 90, 40, 0.35)" : "rgba(56, 189, 248, 0.35)";
-    const markerColorText = planet === "mars" ? "#ff9a6c" : "#93c5fd";
-
-    if (showAnalogs && sitesToHighlight.length > 0) {
-      for (const site of sitesToHighlight) {
-        const sx = g.x + ((site.lon + 180) / 360) * g.mapWidth;
-        const sy = g.y + ((90 - site.lat) / 180) * g.mapHeight;
-
-        if (sx < 0 || sx > g.width || sy < 0 || sy > g.height) continue;
-
-        const hasScore = "score" in site && site.score !== null;
-        const scoreVal = hasScore ? (site as { score: number }).score : null;
-
-        // Clean subtle outer ring (no laser/radar pulses)
-        ctx.strokeStyle = markerColorMuted;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.arc(sx, sy, 7, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Solid cartographic pin dot
-        ctx.fillStyle = markerColor;
-        ctx.beginPath();
-        ctx.arc(sx, sy, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // White micro-core
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(sx, sy, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Minimalist callout badge with location name and score
-        const badge = scoreVal !== null ? `${site.name} · ${scoreVal}%` : site.name;
-        ctx.font = "500 10.5px -apple-system, BlinkMacSystemFont, 'SF Mono', monospace";
-        const bw = ctx.measureText(badge).width;
-        const px = sx - bw / 2 - 8;
-        const py = sy - 26;
-
-        ctx.fillStyle = "rgba(10, 12, 18, 0.92)";
-        ctx.strokeStyle = markerColorMuted;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.roundRect(px, py, bw + 16, 18, 4);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = markerColorText;
-        ctx.fillText(badge, px + 8, py + 12.5);
+      ctx.rect(margins, margins, width - margins * 2, height - margins * 2);
+      ctx.clip();
+      if (base) {
+        ctx.globalAlpha = survey ? metric ? .12 : .39 : .9;
+        ctx.drawImage(base, mapX, mapY, mapEndX - mapX, mapEndY - mapY);
+        ctx.globalAlpha = 1;
       }
-    }
-
-    // Currently Selected User Coordinate Crosshair
-    if (point) {
-      const x = g.x + ((point.lon + 180) / 360) * g.mapWidth;
-      const y = g.y + ((90 - point.lat) / 180) * g.mapHeight;
-      const accent = planet === "mars" ? "#ff8b39" : "#8cd9ff";
-
-      ctx.strokeStyle = accent;
-      ctx.fillStyle = accent;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(x, y, 16, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(x - 24, y); ctx.lineTo(x - 10, y);
-      ctx.moveTo(x + 10, y); ctx.lineTo(x + 24, y);
-      ctx.moveTo(x, y - 24); ctx.lineTo(x, y - 10);
-      ctx.moveTo(x, y + 10); ctx.lineTo(x, y + 24);
-      ctx.stroke();
-    }
-  }, [geometry, layer, planet, point, results, criteria, showAnalogs]);
-
-  useEffect(() => {
-    transform.current = { zoom: 1 };
-    setZoomLabel(1);
-    setLayer("surface");
-    setReady(false);
-    setGeologyReady(false);
-
-    const surface = new Image();
-    const geology = new Image();
-
-    surface.onload = () => {
-      images.current.surface = surface;
-      setReady(true);
-      draw();
-    };
-    geology.onload = () => {
-      images.current.geology = geology;
-      setGeologyReady(true);
-    };
-
-    surface.src = `/images/${planet}.jpg`;
-    geology.src = `/images/${planet}-geology.jpg`;
-
-    return () => {
-      surface.onload = null;
-      geology.onload = null;
-      images.current = {};
-    };
-  }, [planet, draw]);
-
-  useEffect(() => {
-    draw();
-  }, [draw, ready, geologyReady, zoomLabel, results, showAnalogs]);
-
-  useEffect(() => {
-    const observer = new ResizeObserver(draw);
-    if (canvasRef.current) observer.observe(canvasRef.current);
-    return () => observer.disconnect();
-  }, [draw]);
-
-  const zoom = useCallback(
-    (factor: number) => {
-      transform.current.zoom = Math.max(1, Math.min(5, transform.current.zoom * factor));
-      setZoomLabel(transform.current.zoom);
-      draw();
-    },
-    [draw]
-  );
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const onWheel = (event: WheelEvent) => {
-      event.preventDefault();
-      zoom(event.deltaY < 0 ? 1.18 : 1 / 1.18);
-    };
-    canvas.addEventListener("wheel", onWheel, { passive: false });
-    return () => canvas.removeEventListener("wheel", onWheel);
-  }, [zoom]);
-
-  function onMapClick(event: React.MouseEvent<HTMLCanvasElement>) {
-    const start = pointerStart.current;
-    pointerStart.current = null;
-    if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5) return;
-
-    const g = geometry();
-    if (!g) return;
-
-    const box = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - box.left;
-    const y = event.clientY - box.top;
-
-    // Check if clicked near an analog highlight
-    const sites = results.length > 0 ? results : CANDIDATES;
-    if (showAnalogs) {
-      for (const site of sites) {
-        const sx = g.x + ((site.lon + 180) / 360) * g.mapWidth;
-        const sy = g.y + ((90 - site.lat) / 180) * g.mapHeight;
-        if (Math.hypot(x - sx, y - sy) < 22) {
-          onPoint({ lat: site.lat, lon: site.lon });
-          return;
+      ctx.strokeStyle = color("--map-grid");
+      ctx.lineWidth = 1;
+      if (!survey) {
+        for (let lon = -180; lon <= 180; lon += 30) {
+          const [x] = project(lon, 0);
+          ctx.beginPath(); ctx.moveTo(x, mapY); ctx.lineTo(x, mapEndY); ctx.stroke();
+        }
+        for (let lat = -90; lat <= 90; lat += 30) {
+          const [, y] = project(0, lat);
+          ctx.beginPath(); ctx.moveTo(mapX, y); ctx.lineTo(mapEndX, y); ctx.stroke();
+        }
+      }
+      if (survey) {
+        const paint = (cell: PlanetCell) => {
+          const [x, y] = project(cell.bounds.west, cell.bounds.north);
+          const [east, south] = project(cell.bounds.east, cell.bounds.south);
+          const key = cellKey(cell);
+          const matches = matchCounts.get(key) ?? 0;
+          const isMatch = activeFilters > 0 && matches === activeFilters;
+          const isSelected = selected && key === cellKey(selected);
+          const value = valuesByCell.get(key);
+          const hasValue = value !== undefined && minimum !== null && maximum !== null;
+          ctx.fillStyle = color(hasValue ? "--accent" : isMatch || isSelected ? "--map-match" : matches > 0 ? "--map-partial" : "--map-cell");
+          ctx.globalAlpha = hasValue ? .13 + .63 * (maximum === minimum ? .5 : (value - minimum) / (maximum - minimum)) : 1;
+          if (activeFilters > 0 && hasValue && !isMatch && !isSelected) ctx.globalAlpha *= matches > 0 ? .67 : .26;
+          ctx.fillRect(x, y, east - x, south - y);
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = color(isSelected ? "--text" : isMatch ? "--accent" : "--map-grid-strong");
+          ctx.lineWidth = isSelected ? 2 : 1;
+          ctx.strokeRect(x, y, east - x, south - y);
+        };
+        visibleCells.forEach(paint);
+        if (selected && inSurvey(selected, survey)) paint(selected);
+      }
+      ctx.restore();
+      ctx.fillStyle = color("--muted");
+      ctx.font = "10px ui-monospace, monospace";
+      ctx.textAlign = "center";
+      if (!survey) {
+        for (const lon of [-120, -60, 0, 60, 120]) {
+          const [x] = project(lon, 0);
+          if (x > margins && x < width - margins) ctx.fillText(`${lon}°`, x, Math.max(17, mapY - 7));
+        }
+        ctx.textAlign = "right";
+        for (const lat of [-60, -30, 0, 30, 60]) {
+          const [, y] = project(0, lat);
+          if (y > margins && y < height - margins) ctx.fillText(`${lat}°`, Math.max(margins - 3, mapX - 5), y + 4);
+        }
+        for (const group of SURVEYS[planet]) {
+          const hasData = cells.some(cell => inSurvey(cell, group));
+          if (!hasData) continue;
+          const [x, y] = project(group.center.lon, group.center.lat);
+          if (x < margins || x > width - margins || y < margins - 1 || y > height - margins + 1) continue;
+          ctx.fillStyle = color(!activeFilters || cells.some(cell => inSurvey(cell, group) && matchCounts.get(cellKey(cell)) === activeFilters) ? "--accent" : "--muted");
+          ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
         }
       }
     }
+    draw();
+    const observer = new ResizeObserver(draw);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [base, planet, survey, zoom, cells, visibleCells, matchCounts, activeFilters, selected, metric, valuesByCell, minimum, maximum]);
 
-    const u = (x - g.x) / g.mapWidth;
-    const v = (y - g.y) / g.mapHeight;
-    if (u < 0 || u > 1 || v < 0 || v > 1) return;
-
-    onPoint({
-      lat: Math.round((90 - v * 180) * 100) / 100,
-      lon: Math.round((-180 + u * 360) * 100) / 100,
-    });
+  function click(event: React.MouseEvent<HTMLCanvasElement>) {
+    const box = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - box.left, y = event.clientY - box.top;
+    const project = projection.current;
+    if (!project) return;
+    if (!survey) {
+      const group = SURVEYS[planet].find(item => {
+        const [px, py] = project(item.center.lon, item.center.lat);
+        return Math.hypot(px - x, py - y) < 17 && cells.some(cell => inSurvey(cell, item));
+      });
+      if (group) onSurvey(group.id);
+      return;
+    }
+    const encloses = (bounds: Bounds) => {
+      const [left, top] = project(bounds.west, bounds.north);
+      const [right, bottom] = project(bounds.east, bounds.south);
+      return x >= left && x < right && y >= top && y < bottom;
+    };
+    const cell = visibleCells.find(item => encloses(item.bounds) && item.samples_per_axis === 7)
+      ?? visibleCells.find(item => encloses(item.bounds));
+    if (cell) onSelect(cell);
   }
 
-  const highlightCount = results.length > 0 ? results.length : CANDIDATES.length;
-
-  return (
-    <div className="map-root">
-      <canvas
-        ref={canvasRef}
-        className="planet-map-canvas"
-        aria-label={`${planet} equirectangular surface map. Click to select coordinates; use the scroll wheel or controls to zoom.`}
-        onPointerDown={event => {
-          pointerStart.current = { x: event.clientX, y: event.clientY };
-        }}
-        onClick={onMapClick}
-      />
-      {!ready && <div className="map-loading">Loading {planet} map…</div>}
-
-      <div className="map-top-left">
-        {planet === "mars" ? "MARS" : "MOON"} · EQUIRECTANGULAR MAP{" "}
-        <span className="map-resolution">2048 × 1024 px</span>
-      </div>
-
-      <div className="map-top-right">
-        <button
-          className={layer === "surface" ? "active" : ""}
-          onClick={() => setLayer("surface")}
-        >
-          Surface
-        </button>
-        <button
-          className={layer === "geology" ? "active" : ""}
-          onClick={() => setLayer("geology")}
-        >
-          <Layers3 size={14} /> Geology
-        </button>
-        <button
-          className={showAnalogs ? "active" : ""}
-          onClick={() => setShowAnalogs(s => !s)}
-          title="Toggle highlight of similar Earth analog sites"
-        >
-          <MapPin size={13} /> {showAnalogs ? `Analogs (${highlightCount})` : "Show Analogs"}
-        </button>
-      </div>
-
-      <div className="map-controls">
-        <button onClick={() => zoom(1.4)} aria-label="Zoom in">
-          <Plus size={18} />
-        </button>
-        <button onClick={() => zoom(1 / 1.4)} aria-label="Zoom out">
-          <Minus size={18} />
-        </button>
-        <button
-          onClick={() => {
-            transform.current = { zoom: 1 };
-            setZoomLabel(1);
-            draw();
-          }}
-          aria-label="Reset map view"
-        >
-          <RotateCcw size={16} />
-        </button>
-      </div>
-
-      <div className="map-crosshair">
-        <Crosshair size={15} />
-        <span>
-          {point
-            ? `${point.lat.toFixed(2)}° LAT  /  ${point.lon.toFixed(2)}° E`
-            : "EARTH ANALOG GRID ACTIVE (5)"}
-        </span>
-      </div>
-
-      <div className="map-credit">
-        {layer === "surface"
-          ? planet === "mars"
-            ? "NASA Mars Trek · Viking color mosaic"
-            : "NASA SVS · LROC WAC color mosaic"
-          : "Project-provided geology texture · visual reference only; legend unverified"}
-      </div>
+  return <div className="atlas-map" data-view={survey ? "survey" : "global"}>
+    <canvas ref={canvas} onClick={click} role="img" aria-label={`${planet === "mars" ? "Mars" : "Moon"} geographic map. Use the survey and cell selectors to navigate by keyboard.`} />
+    <div className="map-controls">
+      <button type="button" aria-label="Zoom in" onClick={() => setZoom(value => Math.min(4, value * 1.3))}><Plus size={17} /></button>
+      <button type="button" aria-label="Zoom out" disabled={zoom === 1} onClick={() => setZoom(value => Math.max(1, value / 1.3))}><Minus size={17} /></button>
+      <button type="button" aria-label="Reset zoom" disabled={zoom === 1} onClick={() => setZoom(1)}><RotateCcw size={15} /></button>
     </div>
-  );
+    <label className="map-layer">Map layer <select value={layer} onChange={event => setLayer(event.target.value)}><option value="surface">Surface</option><option value="geology">Geology preview</option>{survey && METRICS.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+    {survey && <div className="map-caption">
+      {metric && minimum !== null && maximum !== null && <span className="map-scale"><i /> {minimum.toFixed(1)}–{maximum.toFixed(1)} {metric.unit}</span>}
+      <span>{coordinates(survey.center)}</span>
+    </div>}
+  </div>;
 }

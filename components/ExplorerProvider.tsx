@@ -1,78 +1,72 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { flushSync } from "react-dom";
-import type { AnalogResult, Criteria, Planet, PlanetPoint } from "@/lib/types";
-import { DEFAULT_CRITERIA } from "@/lib/types";
+import type { Comparison, PlanetCell } from "@/lib/science-api";
+import type { Planet } from "@/lib/types";
 
 type ExplorerState = {
   planet: Planet;
-  selectPlanet: (planet: Planet, origin?: { x: number; y: number }, replayTransition?: boolean, onCovered?: () => Promise<void> | void) => Promise<void>;
-  point: PlanetPoint | null;
-  setPoint: (point: PlanetPoint | null) => void;
-  criteria: Criteria;
-  setCriteria: (criteria: Criteria) => void;
-  results: AnalogResult[];
-  setResults: (results: AnalogResult[]) => void;
-  searchNote: string;
-  setSearchNote: (note: string) => void;
+  selectPlanet: (planet: Planet, origin?: { x: number; y: number }, navigate?: () => void) => Promise<void>;
+  selected: PlanetCell | null;
+  setSelected: (cell: PlanetCell | null) => void;
+  comparison: Comparison | null;
+  saveComparison: (comparison: Comparison) => void;
 };
-
 const ExplorerContext = createContext<ExplorerState | null>(null);
+const RESULT_KEY = "pae-terrain-comparison-v1";
 
 export function ExplorerProvider({ children }: { children: React.ReactNode }) {
   const [planet, setPlanet] = useState<Planet>("mars");
-  const [chosen, setChosen] = useState(false);
-  const [point, setPoint] = useState<PlanetPoint | null>(null);
-  const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
-  const [results, setResults] = useState<AnalogResult[]>([]);
-  const [searchNote, setSearchNote] = useState("");
+  const [selected, setSelected] = useState<PlanetCell | null>(null);
+  const [comparison, setComparison] = useState<Comparison | null>(null);
+  const [restored, setRestored] = useState(false);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("pae-planet");
-    if (saved === "mars" || saved === "moon") { setPlanet(saved); setChosen(true); }
+    try {
+      const saved = localStorage.getItem("pae-planet");
+      if (saved === "mars" || saved === "moon") setPlanet(saved);
+      const previous = sessionStorage.getItem(RESULT_KEY);
+      if (previous) setComparison(JSON.parse(previous));
+    } catch { /* Browser storage is optional. */ }
+    setRestored(true);
   }, []);
-  useEffect(() => {
-    document.documentElement.dataset.planet = chosen ? planet : "neutral";
-    if (chosen) window.localStorage.setItem("pae-planet", planet);
-  }, [planet, chosen]);
 
-  async function selectPlanet(next: Planet, origin?: { x: number; y: number }, replayTransition = false, onCovered?: () => Promise<void> | void) {
-    if (next === planet && chosen && !replayTransition) {
-      await onCovered?.();
+  useEffect(() => {
+    document.documentElement.dataset.planet = planet;
+    if (restored) {
+      try { localStorage.setItem("pae-planet", planet); } catch { /* Browser storage is optional. */ }
+    }
+  }, [planet, restored]);
+
+  async function selectPlanet(next: Planet, origin?: { x: number; y: number }, navigate?: () => void) {
+    if (next === planet && !navigate) return;
+    const update = () => {
+      if (next !== planet) setSelected(null);
+      setPlanet(next);
+      navigate?.();
+    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      update();
       return;
     }
-    const root = document.documentElement;
-    const x = origin?.x ?? window.innerWidth / 2;
-    const y = origin?.y ?? window.innerHeight / 2;
-    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y)) + 60;
-    root.style.setProperty("--wave-color", next === "mars" ? "#dc754c" : "#dce2e8");
-    const update = () => {
-      flushSync(() => { setPlanet(next); setChosen(true); setPoint(null); });
-      root.dataset.planet = next;
-    };
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { update(); await onCovered?.(); return; }
     const wave = document.createElement("div");
-    wave.className = `theme-wave theme-wave-${next}`;
-    wave.style.left = `${x}px`;
-    wave.style.top = `${y}px`;
-    wave.style.width = `${radius * 2}px`;
-    wave.style.height = `${radius * 2}px`;
+    wave.className = `atlas-wave atlas-wave-${next}`;
+    wave.setAttribute("aria-hidden", "true");
+    wave.style.setProperty("--wave-x", `${origin?.x ?? window.innerWidth / 2}px`);
+    wave.style.setProperty("--wave-y", `${origin?.y ?? window.innerHeight / 2}px`);
+    for (let band = 0; band < 3; band++) wave.append(document.createElement("span"));
     document.body.append(wave);
-    try {
-      await wave.animate([
-        { transform: "translate(-50%, -50%) scale(0)" },
-        { transform: "translate(-50%, -50%) scale(1)" },
-      ], { duration: 950, easing: "cubic-bezier(.42,0,.58,1)", fill: "forwards" }).finished;
-      update();
-      await onCovered?.();
-      await wave.animate([{ opacity: 0.58 }, { opacity: 0 }], { duration: 420, easing: "ease-out", fill: "forwards" }).finished;
-    } finally {
-      wave.remove();
-    }
+    window.setTimeout(() => wave.remove(), 1150);
+    await new Promise(resolve => window.setTimeout(resolve, 245));
+    update();
   }
 
-  return <ExplorerContext.Provider value={{ planet, selectPlanet, point, setPoint, criteria, setCriteria, results, setResults, searchNote, setSearchNote }}>{children}</ExplorerContext.Provider>;
+  function saveComparison(result: Comparison) {
+    setComparison(result);
+    try { sessionStorage.setItem(RESULT_KEY, JSON.stringify(result)); } catch { /* Browser storage is optional. */ }
+  }
+
+  return <ExplorerContext.Provider value={{ planet, selectPlanet, selected, setSelected, comparison, saveComparison }}>{children}</ExplorerContext.Provider>;
 }
 
 export function useExplorer() {

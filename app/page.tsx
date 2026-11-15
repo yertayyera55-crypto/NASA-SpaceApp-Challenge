@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { MarsTerrain } from "@/components/effects/MarsTerrain";
+import styles from "./landing.module.css";
 
 const PlanetGlobe = dynamic(() => import("@/components/PlanetGlobe"), { ssr: false });
 
@@ -12,12 +13,12 @@ export default function HomePage() {
   const reduce = useReducedMotion();
 
   return (
-    <main className="home-page space-stage">
-      <MarsTerrain className="mars-terrain-home" />
+    <main className={styles.landing}>
+      <MarsTerrain className={styles.contours} />
 
-      <div className="home-copy">
+      <div className={styles.copy}>
         <motion.p
-          className="overline"
+          className={styles.edition}
           initial={reduce ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -35,7 +36,7 @@ export default function HomePage() {
         </motion.h1>
 
         <motion.p
-          className="home-intro"
+          className={styles.intro}
           initial={reduce ? false : { opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -45,24 +46,22 @@ export default function HomePage() {
         </motion.p>
 
         <motion.div
-          className="home-actions"
+          className={styles.actions}
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <Link href="/select" className="primary-action">
+          <Link href="/select" className={styles.start}>
             Start Exploring <ArrowRight size={16} />
           </Link>
-          <Link href="/methodology" className="text-action">
+          <Link href="/methodology" className={styles.data}>
             See the data <ArrowUpRight size={15} />
           </Link>
         </motion.div>
       </div>
 
-      <div className="home-planets" aria-hidden="true">
-        <div className="home-mars">
-          <PlanetGlobe planet="mars" />
-        </div>
+      <div className={styles.planet} aria-hidden="true">
+        <PlanetGlobe planet="mars" />
       </div>
     </main>
   );

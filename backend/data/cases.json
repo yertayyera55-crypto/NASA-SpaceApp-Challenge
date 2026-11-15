@@ -1,0 +1,377 @@
+[
+  {
+    "id": "raven-2022",
+    "site_id": "holuhraun",
+    "title": "RAVEN rover and helicopter analog missions",
+    "research_objective": "Compare rover and aerial field approaches for assessing and sampling volcanic units and overlying sediment.",
+    "selection_rationale": "The field contains basalt flows of different ages and surface sediments relevant to Mars exploration.",
+    "environment": [
+      "Basaltic lava flows",
+      "Sandy and rocky surfaces",
+      "Sparse vegetation"
+    ],
+    "experiment": "Separate simulated rover and helicopter field missions with imaging, sampling and geochemistry.",
+    "source_id": "raven",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "terrain",
+      "operations",
+      "geology"
+    ],
+    "limitations": [
+      "Vehicle operational limits differ from measured site slope. Icelandic weather and field support affect scheduling."
+    ],
+    "purpose_id": "rover-aircraft-mission-comparison"
+  },
+  {
+    "id": "holuhraun-grainflow",
+    "site_id": "holuhraun",
+    "title": "Holuhraun grainflow observations",
+    "research_objective": "Assess whether wind-fed dry sand grainflows could reproduce some properties of Martian recurring slope lineae.",
+    "selection_rationale": "Windblown sand banks against a recent lava front, enabling observations of active grainflows.",
+    "environment": [
+      "Mobile sand",
+      "Recent basalt margin",
+      "Wind exposure"
+    ],
+    "experiment": "Repeat field imaging and interpretation of dry granular flows.",
+    "source_id": "holuhraun_sand",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "atmosphere",
+      "terrain"
+    ],
+    "limitations": [
+      "The Earth observations support a mechanism comparison with different atmosphere and gravity."
+    ],
+    "purpose_id": "dry-grainflow-processes"
+  },
+  {
+    "id": "krafla-uav",
+    "site_id": "krafla",
+    "title": "Icelandic lava-cave UAV survey",
+    "research_objective": "Evaluate small volcanic caves as candidate analog targets and assess how aerial imaging resolves their entrances.",
+    "selection_rationale": "Accessible small vent openings in basaltic fissure flows provide a surface-imaging comparison for candidate Martian cave entrances.",
+    "environment": [
+      "Basaltic lava",
+      "Vent cave openings"
+    ],
+    "experiment": "UAV imagery and photogrammetric surface reconstruction.",
+    "source_id": "krafla_caves",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "geology",
+      "subsurface"
+    ],
+    "limitations": [
+      "Visible openings and surface products provide limited information on deeper cavity geometry."
+    ],
+    "purpose_id": "vent-cave-entrance-imaging"
+  },
+  {
+    "id": "yungay-viking",
+    "site_id": "yungay",
+    "title": "Atacama dry-limit soil study",
+    "research_objective": "Investigate exceptionally arid soils as an analog for interpreting Viking organic and life-detection results.",
+    "selection_rationale": "The aridity gradient allowed comparison with exceptionally dry soils near Yungay.",
+    "environment": [
+      "Hyperarid soil",
+      "Low detected organics in selected samples"
+    ],
+    "experiment": "Field sampling and published laboratory comparison of detection results.",
+    "source_id": "yungay_soils",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "biology",
+      "water"
+    ],
+    "limitations": [
+      "Results depend on selected soil samples and detection methods."
+    ],
+    "purpose_id": "hyperarid-soil-detection"
+  },
+  {
+    "id": "university-permafrost",
+    "site_id": "university-valley",
+    "title": "University Valley climate and energy balance",
+    "research_objective": "Characterize climate, subsurface heat transfer and controls on ground-ice stability for Mars-relevant conditions.",
+    "selection_rationale": "An upland polar desert preserves dry permafrost over ice-cemented ground.",
+    "environment": [
+      "Cold near-surface air",
+      "Dry permafrost",
+      "Spatially varying ice table"
+    ],
+    "experiment": "Multi-year weather and ground-temperature observations with an energy balance model.",
+    "source_id": "university",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "temperature",
+      "water",
+      "subsurface"
+    ],
+    "limitations": [
+      "Results depend on local snow, exposure, and terrestrial atmospheric conditions."
+    ],
+    "purpose_id": "permafrost-ice-stability"
+  },
+  {
+    "id": "hmp-program",
+    "site_id": "haughton",
+    "title": "Haughton-Mars Project 2005 logistics and operations expedition",
+    "research_objective": "Assess the research station as a Moon and Mars logistics analog and collect data for supply-chain modeling.",
+    "selection_rationale": "A rocky high-Arctic impact terrain combines diverse landforms with an isolated operating environment.",
+    "environment": [
+      "Impact structure",
+      "Polar desert",
+      "Remote field operations"
+    ],
+    "experiment": "2005 field expedition testing logistics concepts and technologies for joint human and robotic exploration.",
+    "source_id": "haughton",
+    "target_bodies": [
+      "mars",
+      "moon"
+    ],
+    "categories": [
+      "terrain",
+      "operations"
+    ],
+    "limitations": [
+      "Earth weather and terrain differ from planetary conditions. Current logistics require separate verification."
+    ],
+    "purpose_id": "remote-expedition-logistics"
+  },
+  {
+    "id": "apollo-location",
+    "site_id": "cinder-lake",
+    "title": "Cinder Lake Apollo location test",
+    "research_objective": "Evaluate whether crews can locate themselves on a mapped crater pattern after a simulated lunar landing.",
+    "selection_rationale": "Cinder-covered ground could be modified to recreate part of a mapped lunar crater pattern.",
+    "environment": [
+      "Volcanic cinders",
+      "Constructed crater pattern"
+    ],
+    "experiment": "Constructed field with a lunar module mock-up and crew localization exercise.",
+    "source_id": "cinder",
+    "target_bodies": [
+      "moon"
+    ],
+    "categories": [
+      "terrain",
+      "operations"
+    ],
+    "limitations": [
+      "Engineered geometry, local material and Earth gravity constrain applicability."
+    ],
+    "purpose_id": "crew-crater-field-localization"
+  },
+  {
+    "id": "desert-rats-2008",
+    "site_id": "black-point",
+    "title": "Desert RATS lunar rover field test",
+    "research_objective": "Collect engineering and human-factors measurements from unpressurized and pressurized rover concepts during extended mission-like use.",
+    "selection_rationale": "The broad lava-flow test area supplied realistic surface routes and room for long traverses, night driving and overnight operations.",
+    "environment": [
+      "Northern Arizona lava flow",
+      "Rocky routes and a large traverse area"
+    ],
+    "experiment": "Field test with prototype rovers, driving, simulated EVA and overnight operations.",
+    "source_id": "desert_rats",
+    "target_bodies": [
+      "moon"
+    ],
+    "categories": [
+      "terrain",
+      "operations"
+    ],
+    "limitations": [
+      "Hardware results reflect the tested prototypes, crew and Earth conditions."
+    ],
+    "purpose_id": "extended-rover-human-factors"
+  },
+  {
+    "id": "jett3-2022",
+    "site_id": "sp-mountain",
+    "title": "JETT3 Artemis field simulation",
+    "research_objective": "Exercise integrated crew, science, ground support, tools and procedures for Artemis lunar EVAs.",
+    "selection_rationale": "Remote rocky high-desert volcanic terrain with limited communications infrastructure let the team test geologic sampling and distributed support together.",
+    "environment": [
+      "Volcanic high desert",
+      "Sparse communications infrastructure",
+      "Rocky traverse surfaces"
+    ],
+    "experiment": "Integrated field simulation with astronaut EVAs, geologic sampling and a mission-control science team.",
+    "source_id": "jett3",
+    "target_bodies": [
+      "moon"
+    ],
+    "categories": [
+      "terrain",
+      "geology",
+      "operations"
+    ],
+    "limitations": [
+      "The S P Mountain point is regional. Earth gravity and atmosphere affect field task performance."
+    ],
+    "purpose_id": "integrated-artemis-eva"
+  },
+  {
+    "id": "sp-geology-guide",
+    "site_id": "sp-mountain",
+    "title": "USGS S P Mountain volcanic-process field analog",
+    "research_objective": "Teach field recognition of volcanic landforms and eruption products relevant to other planetary surfaces.",
+    "selection_rationale": "A compact cinder cone, lava flow and graben allow observers to relate distinctive surface textures and mapped landforms to volcanic processes.",
+    "environment": [
+      "Cinder cone",
+      "Lava-flow textures",
+      "Graben"
+    ],
+    "experiment": "USGS geologic field guide with mapped stops and documented observations.",
+    "source_id": "sp_field_guide",
+    "target_bodies": [
+      "mars",
+      "moon"
+    ],
+    "categories": [
+      "geology",
+      "terrain"
+    ],
+    "limitations": [
+      "Field guide observations support process comparisons at a regional scale."
+    ],
+    "purpose_id": "volcanic-process-field-training"
+  },
+  {
+    "id": "indian-tunnel-lidar",
+    "site_id": "indian-tunnel",
+    "title": "Lidar survey of Indian Tunnel",
+    "research_objective": "Assess how lidar characterizes the surface, access pits and interior of a lava tube for planetary exploration.",
+    "selection_rationale": "A known lava tube with collapse openings and an accessible interior allows comparison between surface observations and surveyed geometry.",
+    "environment": [
+      "Blue Dragon lava flow",
+      "Collapse pits",
+      "Lava-tube interior"
+    ],
+    "experiment": "Terrestrial lidar survey combining surface and interior scans.",
+    "source_id": "indian_tunnel",
+    "target_bodies": [
+      "mars",
+      "moon"
+    ],
+    "categories": [
+      "subsurface",
+      "terrain",
+      "operations"
+    ],
+    "limitations": [
+      "The surveyed terrestrial tube does not establish the geometry or accessibility of any off-world cave."
+    ],
+    "purpose_id": "lava-tube-lidar-geometry"
+  },
+  {
+    "id": "basalt-mauna-ulu",
+    "site_id": "mauna-ulu",
+    "title": "NASA BASALT volcanic environments at Mauna Ulu",
+    "research_objective": "Select basaltic field targets for comparisons of volcanic geology and rock alteration with Mars.",
+    "selection_rationale": "Young shield lavas and areas of active fumarolic alteration allow comparison of altered and relatively fresh basalt.",
+    "environment": [
+      "Basaltic shield lava",
+      "Fumarolic alteration",
+      "East Rift Zone"
+    ],
+    "experiment": "Field target characterization using geologic and remote sensing evidence.",
+    "source_id": "mauna_basalt",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "geology"
+    ],
+    "limitations": [
+      "Terrestrial water, gases and weathering modify the analog setting."
+    ],
+    "purpose_id": "volcanic-alteration"
+  },
+  {
+    "id": "ibex-mars-analog",
+    "site_id": "ibex-dunes",
+    "title": "Assessment of Ibex dunes as an aeolian Mars analog",
+    "research_objective": "Characterize dune morphology, migration, sand properties and winds relevant to Martian dunes.",
+    "selection_rationale": "An active, topographically constrained dune field permits comparison of bedforms, sediment transport and source mineralogy.",
+    "environment": [
+      "Active dune field",
+      "Dry basin",
+      "Nearby sediment sources"
+    ],
+    "experiment": "Published field characterization combining dune morphology, winds and sediment evidence.",
+    "source_id": "ibex_nasa",
+    "target_bodies": [
+      "mars"
+    ],
+    "categories": [
+      "atmosphere",
+      "terrain"
+    ],
+    "limitations": [
+      "Terrestrial sand flux and winds cannot be translated directly to Mars."
+    ],
+    "purpose_id": "dune-dynamics"
+  },
+  {
+    "id": "meteor-impact-melts",
+    "site_id": "meteor-crater",
+    "title": "USGS characterization of Meteor Crater impact melts",
+    "research_objective": "Characterize melt particle texture and composition to investigate impact mixing and shock processes.",
+    "selection_rationale": "A well preserved simple impact crater and curated ejecta samples allow study of melting in sedimentary target material.",
+    "environment": [
+      "Simple impact crater",
+      "Sedimentary target rocks",
+      "Impact ejecta"
+    ],
+    "experiment": "Scanning electron microscopy and electron microprobe analysis of curated particles.",
+    "source_id": "meteor_melts",
+    "target_bodies": [
+      "mars",
+      "moon"
+    ],
+    "categories": [
+      "geology"
+    ],
+    "limitations": [
+      "Exact collection locations are unavailable for the dispersed particles."
+    ],
+    "purpose_id": "impact-melt-processes"
+  },
+  {
+    "id": "charyn-sediment-study",
+    "site_id": "charyn",
+    "title": "Charyn terrestrial sedimentary archive",
+    "research_objective": "Reconstruct Late Cenozoic moisture changes from an exposed sediment succession in the Ili Basin.",
+    "selection_rationale": "The continuous sequence preserves alluvial, sheetwash and windblown deposition through changes in climate.",
+    "environment": [
+      "Alluvial gravels",
+      "Windblown silt and loess",
+      "Incised canyon"
+    ],
+    "experiment": "Field stratigraphy, chronology and isotope analysis of soil carbonates.",
+    "source_id": "charyn_strata",
+    "target_bodies": [],
+    "categories": [
+      "geology",
+      "atmosphere"
+    ],
+    "limitations": [
+      "Terrestrial environmental evidence. The study did not certify a planetary analog."
+    ],
+    "purpose_id": "continental-sedimentary-archive"
+  }
+]

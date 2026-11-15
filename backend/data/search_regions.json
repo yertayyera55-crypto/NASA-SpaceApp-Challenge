@@ -1,0 +1,22 @@
+[
+  {"id":"ustyurt","name":"Kazakhstan, western plateau window","country":"Kazakhstan","bounds":{"south":43,"west":53,"north":45,"east":55}},
+  {"id":"betpak-dala","name":"Kazakhstan, central desert window","country":"Kazakhstan","bounds":{"south":46,"west":69,"north":48,"east":71}},
+  {"id":"ili-basin","name":"Kazakhstan, Ili Basin window","country":"Kazakhstan","bounds":{"south":43.5,"west":78,"north":45.5,"east":80}},
+  {"id":"atacama","name":"Chile, Atacama window","country":"Chile","bounds":{"south":-25,"west":-70,"north":-23,"east":-68}},
+  {"id":"iceland-highlands","name":"Iceland, volcanic highlands window","country":"Iceland","bounds":{"south":64,"west":-18,"north":65,"east":-16}},
+  {"id":"dry-valleys","name":"Antarctica, McMurdo Dry Valleys window","country":"Antarctica","bounds":{"south":-78,"west":160,"north":-77,"east":162}},
+  {"id":"aral-east","name":"Kazakhstan, eastern Aral Sea margin window","country":"Kazakhstan","bounds":{"south":45,"west":61,"north":46,"east":62}},
+  {"id":"balkhash-south","name":"Kazakhstan, southern Lake Balkhash desert window","country":"Kazakhstan","bounds":{"south":45,"west":74,"north":46,"east":75}},
+  {"id":"death-valley","name":"United States, Death Valley window","country":"United States","bounds":{"south":36,"west":-117,"north":37,"east":-116}},
+  {"id":"devon-island","name":"Canada, western Devon Island window","country":"Canada","bounds":{"south":75,"west":-90,"north":76,"east":-89}},
+  {"id":"kangerlussuaq","name":"Greenland, Kangerlussuaq window","country":"Greenland","bounds":{"south":67,"west":-51,"north":68,"east":-50}},
+  {"id":"uyuni","name":"Bolivia, western Salar de Uyuni window","country":"Bolivia","bounds":{"south":-21,"west":-68,"north":-20,"east":-67}},
+  {"id":"namib","name":"Namibia, Namib Sand Sea window","country":"Namibia","bounds":{"south":-25,"west":15,"north":-24,"east":16}},
+  {"id":"tassili","name":"Algeria, Tassili n’Ajjer plateau window","country":"Algeria","bounds":{"south":24,"west":8,"north":25,"east":9}},
+  {"id":"danakil","name":"Ethiopia, Erta Ale and Danakil Depression window","country":"Ethiopia","bounds":{"south":13,"west":40,"north":14,"east":41}},
+  {"id":"qaidam","name":"China, Qaidam Basin window","country":"China","bounds":{"south":37,"west":94,"north":38,"east":95}},
+  {"id":"lake-eyre","name":"Australia, Kati Thanda–Lake Eyre window","country":"Australia","bounds":{"south":-29,"west":137,"north":-28,"east":138}},
+  {"id":"tongariro","name":"New Zealand, Tongariro volcanic zone window","country":"New Zealand","bounds":{"south":-40,"west":175,"north":-39,"east":176}},
+  {"id":"oymyakon","name":"Russia, Oymyakon basin window","country":"Russia","bounds":{"south":63,"west":142,"north":64,"east":143}},
+  {"id":"hawaii-volcanoes","name":"United States, Hawaiʻi volcanic island window","country":"United States","bounds":{"south":19,"west":-156,"north":20,"east":-155}}
+]

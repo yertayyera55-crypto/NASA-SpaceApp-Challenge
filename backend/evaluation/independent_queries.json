@@ -1,0 +1,42 @@
+[
+  {
+    "id": "volcanic-flow-morphology",
+    "query": "Map the surface shapes of a recent fissure-fed eruption to interpret young volcanic plains.",
+    "category": "geology",
+    "objective": {"category":"geology","traits":["basalt"]},
+    "site_group": "holuhraun",
+    "reference": "https://pubs.usgs.gov/publication/70275623"
+  },
+  {
+    "id": "upland-polar-freeze",
+    "query": "Find an upland polar desert weather station for sustained frozen conditions and subsurface ice stability.",
+    "category": "temperature",
+    "objective": {"category":"temperature","preferences":[{"feature":"coldest_month_mean_air_temperature_c","direction":"lower"}]},
+    "site_group": "dry-valleys",
+    "reference": "https://ntrs.nasa.gov/citations/20100003844"
+  },
+  {
+    "id": "temporary-wetting",
+    "query": "Study how brief wetting affects signs of life in extremely desiccated surface soils.",
+    "category": "biology",
+    "objective": {"category":"biology","preferences":[{"feature":"mean_precipitation_mm_day","direction":"lower"}]},
+    "site_group": "atacama",
+    "reference": "https://pubmed.ncbi.nlm.nih.gov/29483268/"
+  },
+  {
+    "id": "crew-geology-traverse",
+    "query": "Practice an extended crewed surface traverse with geologic stops, instrument work and mission-control coordination.",
+    "category": "operations",
+    "objective": {"category":"operations","traits":["rover_field_test","eva_training"]},
+    "site_group": "northern-arizona",
+    "reference": "https://ntrs.nasa.gov/citations/20110008008"
+  },
+  {
+    "id": "basalt-cavity-mapping",
+    "query": "Capture the cross-section and interior geometry of a basaltic conduit with laser scanning.",
+    "category": "subsurface",
+    "objective": {"category":"subsurface","traits":["lava_caves"]},
+    "site_group": "craters-of-the-moon",
+    "reference": "https://home.nps.gov/crmo/learn/education/site-tour-3.htm"
+  }
+]

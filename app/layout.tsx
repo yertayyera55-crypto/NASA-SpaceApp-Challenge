@@ -4,8 +4,8 @@ import { ExplorerProvider } from "@/components/ExplorerProvider";
 import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
-  title: "Planetary Analog Explorer",
-  description: "Explore real Mars and Moon maps, then compare Earth field sites with transparent NASA climate evidence.",
+  title: "FindY",
+  description: "Explore Mars and Moon terrain and compare selected areas with potential Earth field sites.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
