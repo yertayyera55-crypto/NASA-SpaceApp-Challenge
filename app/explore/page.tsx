@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Check, ChevronDown, Database, Info, LoaderCircle, Rocket, RotateCcw, Search, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Compass, Droplets, Info, Layers, LoaderCircle, Rocket, RotateCcw, Search, Sparkles, Thermometer } from "lucide-react";
 import { useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
 import { PlanetMap } from "@/components/PlanetMap";
@@ -27,7 +27,7 @@ export default function ExplorePage() {
   const [searching, setSearching] = useState(false);
   const [departing, setDeparting] = useState(false);
   const [error, setError] = useState("");
-  const [open, setOpen] = useState("temperature");
+  const [showRoadmap, setShowRoadmap] = useState(false);
 
   const active = [
     criteria.temperatureMin !== null || criteria.temperatureMax !== null ? "Temperature" : null,
@@ -133,6 +133,7 @@ export default function ExplorePage() {
             <div className="filters-title-left">
               <p className="overline">SCIENTIFIC CRITERIA</p>
               <h2>Define Environment</h2>
+              <p className="filters-subtitle">Configure climate &amp; mission constraints to screen candidate Earth field analogs</p>
             </div>
             <div className="filters-title-actions">
               <span className="active-pill">{active.length} ACTIVE</span>
@@ -148,161 +149,328 @@ export default function ExplorePage() {
           </div>
 
           <div className="filter-content">
-            {/* Temperature */}
-            <div className={`filter-accordion ${open === "temperature" ? "open" : ""}`}>
-              <button className="accordion-head" onClick={() => setOpen(open === "temperature" ? "" : "temperature")}>
-                <span>Air Temperature</span>
-                <span className="filter-status">EARTH DATA <ChevronDown size={14} /></span>
-              </button>
-              {open === "temperature" && (
-                <div className="accordion-body">
-                  <p>Target annual mean air temperature at Earth analog points. Derived from NASA POWER T2M (2001–2020), in °C.</p>
-                  <label className="checkline">
-                    <input
-                      type="checkbox"
-                      checked={criteria.temperatureMin !== null || criteria.temperatureMax !== null}
-                      onChange={event => change({
-                        temperatureMin: event.target.checked ? -20 : null,
-                        temperatureMax: event.target.checked ? 10 : null,
-                      })}
-                    />
-                    Include in suitability evaluation
-                  </label>
-                  {(criteria.temperatureMin !== null || criteria.temperatureMax !== null) && (
-                    <div className="numeric-pair">
-                      <label>
-                        Minimum °C
+            {/* Criterion 1: Air Temperature */}
+            <div className={`criteria-card ${criteria.temperatureMin !== null || criteria.temperatureMax !== null ? "active" : ""}`}>
+              <div className="criteria-card-header">
+                <div className="criteria-title-group">
+                  <div className="criteria-icon-box">
+                    <Thermometer size={16} />
+                  </div>
+                  <div>
+                    <div className="criteria-name-row">
+                      <h3>Air Temperature</h3>
+                      <span className="criteria-tag">T2M · °C</span>
+                    </div>
+                    <p className="criteria-subtext">20-year annual mean surface air temperature (NASA POWER)</p>
+                  </div>
+                </div>
+
+                {/* Tactile toggle switch */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={criteria.temperatureMin !== null || criteria.temperatureMax !== null}
+                  className={`human-switch ${criteria.temperatureMin !== null || criteria.temperatureMax !== null ? "on" : ""}`}
+                  onClick={() => {
+                    const isCurrentlyOn = criteria.temperatureMin !== null || criteria.temperatureMax !== null;
+                    change({
+                      temperatureMin: isCurrentlyOn ? null : -20,
+                      temperatureMax: isCurrentlyOn ? null : 10,
+                    });
+                  }}
+                  title={criteria.temperatureMin !== null || criteria.temperatureMax !== null ? "Disable temperature filter" : "Enable temperature filter"}
+                >
+                  <span className="human-switch-thumb" />
+                </button>
+              </div>
+
+              {criteria.temperatureMin !== null || criteria.temperatureMax !== null ? (
+                <div className="criteria-card-body">
+                  <div className="criteria-readout">
+                    <span>Target Range:</span>
+                    <strong>{criteria.temperatureMin ?? -90}°C &nbsp;to&nbsp; {criteria.temperatureMax ?? 60}°C</strong>
+                  </div>
+
+                  <div className="numeric-inputs-row">
+                    <div className="input-group">
+                      <label htmlFor="temp-min">Min Temp</label>
+                      <div className="input-with-unit">
                         <input
+                          id="temp-min"
                           type="number"
                           min={-90}
                           max={60}
                           value={criteria.temperatureMin ?? ""}
-                          onChange={event => change({ temperatureMin: event.target.value === "" ? null : Number(event.target.value) })}
+                          onChange={e => change({ temperatureMin: e.target.value === "" ? null : Number(e.target.value) })}
+                          placeholder="-20"
                         />
-                      </label>
-                      <label>
-                        Maximum °C
+                        <span className="unit-label">°C</span>
+                      </div>
+                    </div>
+                    <div className="input-group">
+                      <label htmlFor="temp-max">Max Temp</label>
+                      <div className="input-with-unit">
                         <input
+                          id="temp-max"
                           type="number"
                           min={-90}
                           max={60}
                           value={criteria.temperatureMax ?? ""}
-                          onChange={event => change({ temperatureMax: event.target.value === "" ? null : Number(event.target.value) })}
+                          onChange={e => change({ temperatureMax: e.target.value === "" ? null : Number(e.target.value) })}
+                          placeholder="10"
                         />
-                      </label>
+                        <span className="unit-label">°C</span>
+                      </div>
                     </div>
-                  )}
+                  </div>
+
+                  {/* Quick Presets */}
+                  <div className="preset-chips">
+                    <span className="preset-label">Presets:</span>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ temperatureMin: -50, temperatureMax: -10 })}
+                    >
+                      Polar (&lt; -10°C)
+                    </button>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ temperatureMin: -20, temperatureMax: 10 })}
+                    >
+                      Cold Arid (-20..10°C)
+                    </button>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ temperatureMin: 0, temperatureMax: 25 })}
+                    >
+                      Temperate (0..25°C)
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="criteria-card-inactive">
+                  <span>Filter inactive — click toggle to evaluate temperature suitability</span>
                 </div>
               )}
             </div>
 
-            {/* Unavailable Planetary Numerical Layers */}
-            {unavailable.map((item) => (
-              <div className={`filter-accordion ${open === item.id ? "open" : ""}`} key={item.id}>
-                <button className="accordion-head" onClick={() => setOpen(open === item.id ? "" : item.id)}>
-                  <span>{item.label}</span>
-                  <span className="filter-status unavailable-status">NO NUMERICAL LAYER <ChevronDown size={14} /></span>
-                </button>
-                {open === item.id && (
-                  <div className="accordion-body">
-                    <p>{item.description}</p>
-                    <div className="data-unavailable">
-                      <Info size={14} /> Highlights require calibrated, georeferenced raster datasets.
-                    </div>
+            {/* Criterion 2: Annual Precipitation */}
+            <div className={`criteria-card ${criteria.precipitationMax !== null ? "active" : ""}`}>
+              <div className="criteria-card-header">
+                <div className="criteria-title-group">
+                  <div className="criteria-icon-box">
+                    <Droplets size={16} />
                   </div>
-                )}
-              </div>
-            ))}
+                  <div>
+                    <div className="criteria-name-row">
+                      <h3>Precipitation &amp; Aridity</h3>
+                      <span className="criteria-tag">mm/day</span>
+                    </div>
+                    <p className="criteria-subtext">Maximum annual mean precipitation threshold (NASA POWER)</p>
+                  </div>
+                </div>
 
-            {/* Environmental Conditions / Precipitation */}
-            <div className={`filter-accordion ${open === "environment" ? "open" : ""}`}>
-              <button className="accordion-head" onClick={() => setOpen(open === "environment" ? "" : "environment")}>
-                <span>Precipitation (Aridity)</span>
-                <span className="filter-status">EARTH DATA <ChevronDown size={14} /></span>
-              </button>
-              {open === "environment" && (
-                <div className="accordion-body">
-                  <p>Maximum annual mean precipitation at Earth analog points. Derived from NASA POWER PRECTOTCORR, in mm/day.</p>
-                  <label className="checkline">
-                    <input
-                      type="checkbox"
-                      checked={criteria.precipitationMax !== null}
-                      onChange={event => change({ precipitationMax: event.target.checked ? 0.5 : null })}
-                    />
-                    Include precipitation threshold
-                  </label>
-                  {criteria.precipitationMax !== null && (
-                    <div className="range-field">
+                {/* Tactile toggle switch */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={criteria.precipitationMax !== null}
+                  className={`human-switch ${criteria.precipitationMax !== null ? "on" : ""}`}
+                  onClick={() => {
+                    change({ precipitationMax: criteria.precipitationMax !== null ? null : 0.5 });
+                  }}
+                  title={criteria.precipitationMax !== null ? "Disable precipitation filter" : "Enable precipitation filter"}
+                >
+                  <span className="human-switch-thumb" />
+                </button>
+              </div>
+
+              {criteria.precipitationMax !== null ? (
+                <div className="criteria-card-body">
+                  <div className="criteria-readout">
+                    <span>Upper Threshold:</span>
+                    <strong>&le; {criteria.precipitationMax} mm/day</strong>
+                  </div>
+
+                  <div className="slider-container">
+                    <div className="slider-row">
                       <input
                         type="range"
-                        min="0"
-                        max="10"
+                        min="0.1"
+                        max="5.0"
                         step="0.1"
-                        value={Math.min(criteria.precipitationMax, 10)}
-                        onChange={event => change({ precipitationMax: Number(event.target.value) })}
+                        value={Math.min(criteria.precipitationMax, 5.0)}
+                        onChange={e => change({ precipitationMax: Number(e.target.value) })}
+                        className="human-slider"
                       />
-                      <label>
+                      <div className="slider-number-box">
                         <input
                           type="number"
                           min="0"
                           max="50"
                           step="0.1"
                           value={criteria.precipitationMax}
-                          onChange={event => change({ precipitationMax: Number(event.target.value) })}
+                          onChange={e => change({ precipitationMax: Number(e.target.value) })}
                         />
-                        mm/day
-                      </label>
+                        <span>mm/d</span>
+                      </div>
                     </div>
-                  )}
+                    <div className="slider-ticks">
+                      <span>0.1 mm (hyper-arid)</span>
+                      <span>1.0 mm (arid)</span>
+                      <span>5.0 mm (semi-arid)</span>
+                    </div>
+                  </div>
+
+                  {/* Quick Presets */}
+                  <div className="preset-chips">
+                    <span className="preset-label">Presets:</span>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ precipitationMax: 0.2 })}
+                    >
+                      Hyper-arid (&le; 0.2)
+                    </button>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ precipitationMax: 0.5 })}
+                    >
+                      Arid (&le; 0.5)
+                    </button>
+                    <button
+                      type="button"
+                      className="preset-chip"
+                      onClick={() => change({ precipitationMax: 2.0 })}
+                    >
+                      Semi-arid (&le; 2.0)
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="criteria-card-inactive">
+                  <span>Filter inactive — click toggle to enforce maximum precipitation</span>
                 </div>
               )}
             </div>
 
-            {/* Mission Purpose */}
-            <div className={`filter-accordion ${open === "mission" ? "open" : ""}`}>
-              <button className="accordion-head" onClick={() => setOpen(open === "mission" ? "" : "mission")}>
-                <span>Mission Purpose</span>
-                <span className="filter-status">CONTEXT <ChevronDown size={14} /></span>
-              </button>
-              {open === "mission" && (
-                <div className="accordion-body">
-                  <p>Recorded as scientific context with your query; does not arbitrarily alter the climate suitability index.</p>
-                  <select
-                    value={criteria.mission}
-                    onChange={event => change({ mission: event.target.value as Criteria["mission"] })}
-                  >
-                    <option value="general">General planetary exploration</option>
-                    <option value="rover">Rover mobility & chassis testing</option>
-                    <option value="geology">Geology & regolith fieldwork</option>
-                    <option value="habitat">Extreme habitat & life support</option>
-                  </select>
+            {/* Criterion 3: Mission Purpose */}
+            <div className="criteria-card active">
+              <div className="criteria-card-header">
+                <div className="criteria-title-group">
+                  <div className="criteria-icon-box">
+                    <Compass size={16} />
+                  </div>
+                  <div>
+                    <div className="criteria-name-row">
+                      <h3>Mission Objective</h3>
+                      <span className="criteria-tag context-tag">Context</span>
+                    </div>
+                    <p className="criteria-subtext">Select operational focus for analog candidate evaluation</p>
+                  </div>
                 </div>
-              )}
-            </div>
-
-            {/* AI Assistant */}
-            <div className="ai-section">
-              <div className="ai-header">
-                <span><Sparkles size={14} /> AI QUERY ASSISTANT</span>
               </div>
-              <p>Describe your mission objectives. Gemini extracts explicit numerical thresholds without hallucinating data.</p>
-              <textarea
-                rows={3}
-                value={query}
-                onChange={event => setQuery(event.target.value)}
-                placeholder="e.g. Extreme arid cold desert below 5°C with minimal rainfall for rover mobility trials..."
-              />
+
+              <div className="criteria-card-body">
+                <div className="mission-grid">
+                  {[
+                    { id: "rover", label: "Rover Mobility", desc: "Chassis, wheels & locomotion in loose regolith" },
+                    { id: "geology", label: "Geology Fieldwork", desc: "Basalt, mineral spectroscopy & rock sampling" },
+                    { id: "habitat", label: "Extreme Habitat", desc: "Isolation, life support & shelter simulation" },
+                    { id: "general", label: "General Exploration", desc: "Broad planetary environmental screening" },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`mission-tile ${criteria.mission === item.id ? "selected" : ""}`}
+                      onClick={() => change({ mission: item.id as Criteria["mission"] })}
+                    >
+                      <div className="mission-tile-head">
+                        <strong>{item.label}</strong>
+                        {criteria.mission === item.id && <Check size={14} className="tile-check" />}
+                      </div>
+                      <small>{item.desc}</small>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Criterion 4: AI Mission Assistant */}
+            <div className="criteria-card ai-assistant-card">
+              <div className="criteria-card-header">
+                <div className="criteria-title-group">
+                  <div className="criteria-icon-box ai-icon-box">
+                    <Sparkles size={16} />
+                  </div>
+                  <div>
+                    <div className="criteria-name-row">
+                      <h3>AI Mission Assistant</h3>
+                      <span className="criteria-tag ai-tag">Natural Language</span>
+                    </div>
+                    <p className="criteria-subtext">Describe your mission goals in plain words to auto-configure criteria</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="criteria-card-body">
+                <div className="ai-input-wrapper">
+                  <textarea
+                    rows={2}
+                    value={query}
+                    onChange={event => setQuery(event.target.value)}
+                    placeholder="e.g. Extreme freezing dry desert below 0°C with minimal rainfall for rover wheel trials..."
+                  />
+                  <button
+                    type="button"
+                    className="ai-apply-btn"
+                    disabled={interpreting || query.trim().length < 8}
+                    onClick={interpret}
+                  >
+                    {interpreting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}
+                    <span>{interpreting ? "Extracting parameters…" : "Apply Mission Prompt"}</span>
+                  </button>
+                </div>
+
+                {aiMessage && <div className="ai-feedback-banner">{aiMessage}</div>}
+                {unsupported.length > 0 && (
+                  <div className="ai-warning-banner">
+                    Requested parameters without numerical layers: {unsupported.join(", ")}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Planned Scientific Layers (Collapsible roadmap) */}
+            <div className="roadmap-drawer">
               <button
-                className="ai-action"
-                disabled={interpreting || query.trim().length < 8}
-                onClick={interpret}
+                type="button"
+                className="roadmap-toggle"
+                onClick={() => setShowRoadmap(!showRoadmap)}
               >
-                {interpreting ? <LoaderCircle className="spin" size={14} /> : <Sparkles size={14} />}
-                Interpret Query <ArrowRight size={13} />
+                <span>
+                  <Layers size={14} /> Planned Planetary Raster Layers ({unavailable.length})
+                </span>
+                <ChevronDown size={14} className={showRoadmap ? "rotate-180" : ""} />
               </button>
-              {aiMessage && <p className="filter-message">{aiMessage}</p>}
-              {unsupported.length > 0 && (
-                <p className="filter-message">Unsupported parameters requested: {unsupported.join(", ")}</p>
+              {showRoadmap && (
+                <div className="roadmap-content">
+                  <p className="roadmap-intro">
+                    The following planetary datasets are available as visual references, with calibrated numerical filtering planned for future releases:
+                  </p>
+                  <div className="roadmap-list">
+                    {unavailable.map(item => (
+                      <div key={item.id} className="roadmap-item">
+                        <strong>{item.label}</strong>
+                        <span>{item.description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -315,13 +483,13 @@ export default function ExplorePage() {
                   <b key={name}><Check size={11} /> {name}</b>
                 ))
               ) : (
-                <em>Select at least one criterion</em>
+                <em>No active thresholds · All candidates evaluated</em>
               )}
             </div>
             {error && <p className="filter-error">{error}</p>}
             <button
               className="search-action"
-              disabled={searching || !active.length}
+              disabled={searching}
               onClick={search}
             >
               {searching ? <LoaderCircle size={16} className="spin" /> : <Search size={16} />}
