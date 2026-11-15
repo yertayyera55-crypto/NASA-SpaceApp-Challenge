@@ -83,8 +83,17 @@ function Explorer({ planet }: { planet: Planet }) {
   }).length]));
   const matching = cells.filter(cell => matchCounts.get(cellKey(cell)) === active.length);
   const matches = new Set(matching.map(cellKey));
-  const survey = SURVEYS[planet].find(item => item.id === surveyId);
-  const surveyCells = survey ? cells.filter(cell => inSurvey(cell, survey)) : cells;
+  const surveys = SURVEYS[planet].map(survey => {
+    const measured = cells.filter(cell => inSurvey(cell, survey));
+    return {
+      ...survey,
+      measured,
+      mapOnly: measured.length > 0 && measured.every(cell => cell.comparableScale === false),
+      comparableMatch: measured.find(cell => cell.comparableScale !== false && matches.has(cellKey(cell))),
+    };
+  });
+  const survey = surveys.find(item => item.id === surveyId);
+  const surveyCells = survey?.measured ?? cells;
   const localMatches = survey ? matching.filter(cell => inSurvey(cell, survey)) : matching;
   const firstComparable = localMatches.find(cell => cell.comparableScale !== false);
   const suggested = active.length && !target ? firstComparable : undefined;
@@ -175,7 +184,7 @@ function Explorer({ planet }: { planet: Planet }) {
   return <div className="explorer-workspace">
     <section className="map-workspace" aria-label={`${world} map`}>
       <div className="map-toolbar">
-        <label>Survey area<select value={surveyId} onChange={event => changeSurvey(event.target.value)}><option value="">Global overview</option>{SURVEYS[planet].map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+        <label>Survey area<select value={surveyId} onChange={event => changeSurvey(event.target.value)}><option value="">Global overview</option>{surveys.map(item => <option key={item.id} value={item.id}>{item.name}{item.mapOnly ? " · Map only" : ""}</option>)}</select></label>
         {(survey || active.length > 0) && <label>{active.length ? "Matching cell" : "Mapped cell"}<select value={displayedCell ? cellKey(displayedCell) : ""} onChange={event => chooseCell(cellOptions.find(item => cellKey(item) === event.target.value) ?? null)} disabled={!cellOptions.length && !targetOutsideOptions}>
           <option value="">{active.length && !cellOptions.length ? "No matching cells" : "Select a cell"}</option>
           {targetOutsideOptions && <option value={cellKey(target)} disabled>{coordinates(target.point)} · outside filters</option>}
@@ -239,7 +248,14 @@ function Explorer({ planet }: { planet: Planet }) {
         <label>Earth search area<select value={scope} onChange={event => setScope(event.target.value)}><option value="all">All prepared regions</option>{regions.some(region => region.country === "Kazakhstan") && <option value="kazakhstan">Kazakhstan</option>}</select></label>
         <p className="filter-help">Earth patches are ranked by how closely their terrain resembles the chosen {world} cell.</p>
         {invalid ? <p className="notice" role="alert">Check the minimum and maximum values.</p> : !loading && !loadError && <div className="filter-status">
-          {active.length > 0 && !localMatches.length ? <>
+          {survey?.mapOnly ? <>
+            <p className="notice" role="status">{survey.name} has measured terrain for map filters. Earth analog search is unavailable here because the cells have no comparable Earth measurements at their scale.</p>
+            {surveys.flatMap(item => {
+              const alternative = item.comparableMatch;
+              return alternative ? <p key={item.id}><button type="button" className="text-button" onClick={() => chooseCell(alternative)}>Use a cell in {item.name}</button></p> : [];
+            })}
+            {active.length > 0 && !surveys.some(item => item.comparableMatch) && <p className="filter-help">Broaden the ranges or clear filters to find a comparable cell in another survey.</p>}
+          </> : active.length > 0 && !localMatches.length ? <>
             <p className="notice" role="status">No measured cells in {searchArea} meet all filters. Broaden the ranges{survey ? " or check all surveys" : ""}.</p>
             {survey && matching.length > 0 && <button type="button" className="text-button" onClick={() => changeSurvey("")}>Show matches in other surveys ({matching.length})</button>}
           </> : !targetMatches || displayedCell?.comparableScale === false ? <>
