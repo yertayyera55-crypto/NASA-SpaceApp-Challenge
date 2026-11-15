@@ -42,6 +42,10 @@ Open the [site](http://localhost:3000) and [FastAPI docs](http://127.0.0.1:8000/
 
 Use the same Git commit for both services. Run the commands below from the repository root. The maps, font, and prepared data are included in the repository.
 
+On Vercel, import the repository from its root and deploy `main`. The [Vercel Services](https://vercel.com/docs/services) configuration builds both services together and supplies `ANALOG_API_URL` as an internal binding for Next.js. Use Node.js 24 for the project. To check the deployed site, follow step 4 below.
+
+### Deploy on separate hosts
+
 | Service | Build or install | Start |
 | --- | --- | --- |
 | FastAPI with Python 3.11+ | `python -m pip install -r backend/requirements.txt` | `python -m uvicorn backend.analog_api.main:app --host 0.0.0.0 --port "${PORT:-8000}"` |

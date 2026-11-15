@@ -1,0 +1,35 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "web": {
+      "root": ".",
+      "framework": "nextjs",
+      "installCommand": "npm ci",
+      "buildCommand": "npm run build",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "science",
+          "format": "url",
+          "env": "ANALOG_API_URL"
+        }
+      ]
+    },
+    "science": {
+      "root": "backend",
+      "framework": "fastapi",
+      "entrypoint": "analog_api.main:app",
+      "functions": {
+        "analog_api/main.py": {
+          "includeFiles": "data/**"
+        }
+      }
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": { "service": "web" }
+    }
+  ]
+}
