@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useExplorer } from "@/components/ExplorerProvider";
-import { coordinates, metricLabel, scienceRequest, type EarthCandidate, type EarthRegion } from "@/lib/science-api";
+import { bestPatchesByRegion, coordinates, metricLabel, scienceRequest, type EarthCandidate, type EarthRegion } from "@/lib/science-api";
 
 const skippedReasons: Record<string, string> = {
   incompatible_datum: "different vertical reference",
@@ -40,8 +40,9 @@ export default function ResultsPage() {
   const [regions, setRegions] = useState<EarthRegion[]>([]);
   const [index, setIndex] = useState(0);
   const swipeStart = useRef<number | null>(null);
-  const candidate = comparison?.candidates[index] ?? comparison?.candidates[0];
-  const selectedIndex = candidate && comparison ? comparison.candidates.indexOf(candidate) : 0;
+  const candidates = bestPatchesByRegion(comparison?.candidates ?? []);
+  const selectedIndex = index < candidates.length ? index : 0;
+  const candidate = candidates[selectedIndex];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -51,9 +52,8 @@ export default function ResultsPage() {
 
   if (!comparison) return <main className="atlas-page results-empty"><h1>Earth analogs</h1><p>Select a measured cell on Mars or the Moon to compare its terrain with Earth.</p><Link className="primary-action" href="/explore">Open the explorer</Link></main>;
   const world = comparison.target.body === "mars" ? "Mars" : "Moon";
-  if (!candidate) return <main className="atlas-page results-empty"><Link className="text-link" href="/explore"><ArrowLeft size={16} /> Back to the map</Link><h1>No comparable Earth patches</h1><p>The selected {world} cell does not have enough data at a scale we can compare.</p><ul>{comparison.skipped_features.map(item => <li key={item.feature}>{metricLabel(item.feature)} ({skippedReasons[item.reason] ?? item.reason})</li>)}</ul></main>;
+  if (!candidate) return <main className="atlas-page results-empty"><Link className="text-link" href="/explore"><ArrowLeft size={16} /> Back to the map</Link><h1>No comparable Earth patches</h1><p>The selected Earth search area has no comparable patches for this {world} cell.</p>{comparison.skipped_features.length > 0 && <ul>{comparison.skipped_features.map(item => <li key={item.feature}>{metricLabel(item.feature)} ({skippedReasons[item.reason] ?? item.reason})</li>)}</ul>}</main>;
 
-  const { candidates } = comparison;
   const region = regions.find(item => item.id === candidate.region_id);
   const name = locationName(candidate, regions);
   function move(direction: number) {
@@ -70,8 +70,8 @@ export default function ResultsPage() {
         if (Math.abs(delta) > 55) move(delta > 0 ? -1 : 1);
       }}>
         <SiteImage key={candidate.patch.cell_id} candidate={candidate} name={name} />
-        <div className="candidate-nav"><span>Candidate {selectedIndex + 1} of {candidates.length}</span><div><button type="button" aria-label="Previous candidate" disabled={candidates.length < 2} onClick={() => move(-1)}><ChevronLeft size={20} /></button><button type="button" aria-label="Next candidate" disabled={candidates.length < 2} onClick={() => move(1)}><ChevronRight size={20} /></button></div></div>
-        <ol className="candidate-list">{candidates.map((item, position) => <li key={item.patch.cell_id}><button type="button" aria-pressed={position === selectedIndex} onClick={() => setIndex(position)}><span>{locationName(item, regions)}</span><span>{item.similarity_index.toFixed(1)}</span></button></li>)}</ol>
+        <div className="candidate-nav"><span>Region {selectedIndex + 1} of {candidates.length} · Best patch per region</span><div><button type="button" aria-label="Previous candidate" disabled={candidates.length < 2} onClick={() => move(-1)}><ChevronLeft size={20} /></button><button type="button" aria-label="Next candidate" disabled={candidates.length < 2} onClick={() => move(1)}><ChevronRight size={20} /></button></div></div>
+        <ol className="candidate-list">{candidates.map((item, position) => <li key={item.region_id}><button type="button" aria-pressed={position === selectedIndex} onClick={() => setIndex(position)}><span>{locationName(item, regions)}<small>{coordinates(item.patch.point)}</small></span><span>{item.similarity_index.toFixed(1)}</span></button></li>)}</ol>
       </section>
       <section className="earth-details" aria-label="Selected candidate evidence" key={candidate.patch.cell_id}>
         <p className="candidate-country">{region?.country}</p><h2>{name}</h2>

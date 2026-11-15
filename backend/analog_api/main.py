@@ -17,7 +17,7 @@ from .models import (
 )
 from .ranking import profile, rank
 from .overlays import CellOverlayCollection, cell_overlays
-from .planetary_analogs import EARTH_PATCHES, PlanetaryAnalogRequest, PlanetaryAnalogResponse, find_analogs, load_terrain_patches
+from .planetary_analogs import EARTH_PATCHES, PlanetaryAnalogRequest, PlanetaryAnalogResponse, find_analogs, load_terrain_patches, matching_scale
 from .retrieval import LocalSentenceEncoder, search_cases
 from .spatial import SEARCH_GRID, load_search_grid, search_regions
 from .spatial_models import SearchRegion, SpatialSearchRequest, SpatialSearchResponse
@@ -92,7 +92,8 @@ def create_app(catalog: Catalog | None = None) -> FastAPI:
                            offset: Annotated[int, Query(ge=0)] = 0,
                            limit: Annotated[int, Query(ge=1, le=400)] = 100) -> CellOverlayCollection:
         rows = [cell for cell in req.app.state.catalog.features.planetary_cells if body == cell.body]
-        return cell_overlays(rows[offset:offset + limit])
+        patches = req.app.state.terrain_patches
+        return cell_overlays(rows[offset:offset + limit], lambda cell: bool(patches.get(matching_scale(cell)[1])))
 
     @app.get("/api/planetary-points", tags=["Catalog"])
     def planetary_points(req: Request) -> list[PlanetaryRow]:

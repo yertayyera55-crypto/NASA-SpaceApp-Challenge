@@ -1,0 +1,53 @@
+.line {
+  display: block;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glyph {
+    position: relative;
+    animation: type-reveal 1ms linear var(--type-delay) backwards;
+  }
+
+  .glyph::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: 100%;
+    inset-block-end: .16em;
+    width: .43em;
+    height: .7em;
+    background: currentColor;
+    pointer-events: none;
+    opacity: 0;
+    animation: type-caret var(--type-step) steps(1, end) var(--type-delay);
+  }
+
+  .glyph:last-child::after {
+    animation-duration: calc(2 * var(--type-step));
+  }
+
+  .glyph[data-type-last]::after {
+    animation-name: type-caret-finish;
+    animation-duration: 600ms;
+    animation-iteration-count: 2;
+  }
+}
+
+@keyframes type-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes type-caret {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes type-caret-finish {
+  0% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}

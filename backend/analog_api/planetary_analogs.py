@@ -69,6 +69,7 @@ class PlanetaryAnalogRequest(Model):
     features: list[Feature] = Field(default_factory=lambda: list(TERRAIN_FEATURES), min_length=1, max_length=12)
     regions: list[Text] = Field(default_factory=list, max_length=32)
     include_documented_cells: bool = True
+    one_per_region: bool = False
     limit: int = Field(default=5, ge=1, le=15, strict=True)
 
 
@@ -185,10 +186,16 @@ def find_analogs(catalog: Catalog, grid: SearchGrid, patches_by_scale, request: 
                                                similarity_index=score, comparisons=comparisons, documented_site_ids=documented))
 
     candidates.sort(key=lambda row: (-row.similarity_index, row.patch.cell_id))
+    ranked = candidates
+    if request.one_per_region:
+        by_region: dict[str, EarthAnalogCandidate] = {}
+        for candidate in candidates:
+            by_region.setdefault(candidate.region_id, candidate)
+        ranked = list(by_region.values())
     return PlanetaryAnalogResponse(
         status="ranked" if candidates else "insufficient_comparable_data", target=target, target_footprint=footprint,
         earth_reference_scale=SCALES.get(scale_id), compared_features=compared, skipped_features=skipped,
-        eligible_earth_cells=len(eligible), compared_earth_cells=len(candidates), candidates=candidates[:request.limit],
+        eligible_earth_cells=len(eligible), compared_earth_cells=len(candidates), candidates=ranked[:request.limit],
         sources=catalog.source_list([target.source_id, EARTH_DEM] if candidates else [target.source_id]),
         limitations=[
             "Scores average relative terrain similarity for the compared features. They are screening scores, not validation probabilities.",

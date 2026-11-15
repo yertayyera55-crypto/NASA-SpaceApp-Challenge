@@ -170,8 +170,11 @@ export function PlanetMap({ planet, cells, matchCounts, activeFilters, selected,
       const [right, bottom] = project(bounds.east, bounds.south);
       return x >= left && x < right && y >= top && y < bottom;
     };
-    const cell = visibleCells.find(item => encloses(item.bounds) && item.samples_per_axis === 7)
-      ?? visibleCells.find(item => encloses(item.bounds));
+    const underPointer = visibleCells.filter(item => encloses(item.bounds));
+    const matching = activeFilters ? underPointer.filter(item => matchCounts.get(cellKey(item)) === activeFilters) : [];
+    const comparable = matching.filter(item => item.comparableScale !== false);
+    const options = comparable.length ? comparable : matching.length ? matching : underPointer;
+    const cell = options.find(item => item.samples_per_axis === 7) ?? options[0];
     if (cell) onSelect(cell);
   }
 

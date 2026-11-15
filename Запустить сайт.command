@@ -69,7 +69,7 @@ if [ -z "${ANALOG_API_URL:-}" ]; then
     if ! backend/.venv/bin/python -c 'import uvicorn, fastapi, pydantic, httpx, dotenv' >/dev/null 2>&1; then
       backend/.venv/bin/python -m pip install -r backend/requirements.txt || pause_on_error "Не удалось установить зависимости FastAPI."
     fi
-    backend/.venv/bin/python -m uvicorn backend.analog_api.main:app --host 127.0.0.1 --port 8000 &
+    backend/.venv/bin/python -m uvicorn backend.analog_api.main:app --host 127.0.0.1 --port 8000 --reload --reload-dir backend/analog_api &
     science_pid=$!
   fi
 fi

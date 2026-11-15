@@ -1,4 +1,5 @@
 """Serialize planetocentric raster-cell footprints for map overlays."""
+from collections.abc import Callable
 from typing import Literal
 
 from .models import CellBounds, Model, Number, PlanetaryCell
@@ -13,6 +14,7 @@ class CellOverlay(Model):
     type: Literal["Feature"] = "Feature"
     geometry: CellPolygon
     properties: PlanetaryCell
+    comparable_scale: bool
 
 
 class CellOverlayCollection(Model):
@@ -25,8 +27,8 @@ def bounds_polygon(b: CellBounds) -> CellPolygon:
     return CellPolygon(coordinates=[ring])
 
 
-def cell_overlays(cells: list[PlanetaryCell]) -> CellOverlayCollection:
-    features = []
-    for cell in cells:
-        features.append(CellOverlay(geometry=bounds_polygon(cell.bounds), properties=cell))
-    return CellOverlayCollection(features=features)
+def cell_overlays(cells: list[PlanetaryCell], comparable_scale: Callable[[PlanetaryCell], bool]) -> CellOverlayCollection:
+    return CellOverlayCollection(features=[
+        CellOverlay(geometry=bounds_polygon(cell.bounds), properties=cell, comparable_scale=comparable_scale(cell))
+        for cell in cells
+    ])

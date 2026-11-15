@@ -54,7 +54,22 @@ def test_unsupported_features_reported_and_regions_filter_earth_patches(api):
     assert all(row["region_id"] == "ili-basin" for row in data["candidates"])
 
 
+def test_best_patch_per_region_is_chosen_before_display_limit(api):
+    overlays = api.get("/api/planetary-overlays?body=mars&limit=400").json()["features"]
+    gale = next(row["properties"] for row in overlays
+                if row["properties"]["point"] == pytest.approx({"lat": -4.39, "lon": 137.11}, abs=1e-8))
+    target = {key: gale[key] for key in ("body", "bounds", "source_id", "samples_per_axis")}
+    usual = api.post("/api/discover/planetary-analogs", json={"target": target}).json()
+    grouped = api.post("/api/discover/planetary-analogs", json={"target": target, "one_per_region": True}).json()
+    assert [row["region_id"] for row in usual["candidates"][:3]] == ["ili-basin"] * 3
+    assert grouped["compared_earth_cells"] == usual["compared_earth_cells"] == 524
+    assert grouped["candidates"][0] == usual["candidates"][0]
+    assert len({row["region_id"] for row in grouped["candidates"]}) == len(grouped["candidates"]) == 5
+
+
 def test_unmatched_scale_and_nonexistent_cell_abstain(api):
+    overlays = api.get("/api/planetary-overlays?body=moon&limit=400").json()["features"]
+    assert all(row["comparable_scale"] == (row["properties"]["samples_per_axis"] == 11) for row in overlays)
     _, target = selection(api, "moon", 7)
     data = api.post("/api/discover/planetary-analogs", json={"target": target}).json()
     assert data["status"] == "insufficient_comparable_data"

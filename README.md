@@ -5,9 +5,9 @@ FindY is a NASA Space Apps Challenge 2026 project for finding places on Earth wi
 ## Try a search
 
 1. Select **Start Exploring**, then choose **Mars** or **Moon**.
-2. Open a surveyed area such as Jezero or Haworth. Choose a map layer, set numerical filters, and select a measured cell.
+2. Open a surveyed area such as Jezero or Haworth. Pick a measured cell on the map, or set terrain filters and use the suggested matching cell. **AI query** also accepts English requests such as `Find terrain with slope at most 12 degrees` and fills in supported filters for review.
 3. Choose all prepared Earth regions or **Kazakhstan**, then select **Find Earth Analogs**.
-4. Browse candidates and compare slope, relief and roughness with the selected planetary cell. Each result includes sources and limitations.
+4. Browse the highest-scoring patch per region. Each result includes coordinates, terrain measurements, sources, and limitations.
 
 ## Run locally
 
@@ -26,7 +26,7 @@ cd NASA-SpaceApp-Challenge
 python3 -m venv backend/.venv
 source backend/.venv/bin/activate
 python -m pip install -r backend/requirements.txt
-python -m uvicorn backend.analog_api.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn backend.analog_api.main:app --host 127.0.0.1 --port 8000 --reload --reload-dir backend/analog_api
 ```
 
 On Windows, use `backend\.venv\Scripts\Activate.ps1` in PowerShell to activate the environment. In a second terminal, start Next.js.
@@ -37,6 +37,20 @@ npm run dev
 ```
 
 Open the [site](http://localhost:3000) and [FastAPI docs](http://127.0.0.1:8000/docs). Next.js forwards science requests to `http://127.0.0.1:8000` by default. Set the server-side `ANALOG_API_URL` if FastAPI uses a different address. Terrain comparisons and manual filters use the bundled data without API credentials. The query interpreter uses local rules by default and supports optional Gemini credentials. [Environment and credential setup](backend/INTEGRATION.md#gemini)
+
+## Deploy FindY
+
+Use the same Git commit for both services. Run the commands below from the repository root. The maps, font, and prepared data are included in the repository.
+
+| Service | Build or install | Start |
+| --- | --- | --- |
+| FastAPI with Python 3.11+ | `python -m pip install -r backend/requirements.txt` | `python -m uvicorn backend.analog_api.main:app --host 0.0.0.0 --port "${PORT:-8000}"` |
+| Next.js with Node.js 24 | `npm ci && npm run build` | `npm run start -- --hostname 0.0.0.0 --port "${PORT:-3000}"` |
+
+1. Start FastAPI and check that `/api/health` returns `status: "ok"` and `planetary_cells: 196`.
+2. Set `ANALOG_API_URL` in the **Next.js server environment** to the deployed FastAPI origin, for example `https://findy-api.example.com`. The address must be reachable from the Next.js server. Managed Next.js hosts can run their framework adapter in place of the start command.
+3. Keep any `GEMINI_API_KEY` in the FastAPI environment. The default English interpreter works without it. The prepared map and Earth analog search require no API keys or data downloads.
+4. On the deployed site, open **Mars → Gale crater** and set **Slope (P90)** to `4`–`12` and **Local relief** maximum to `600`. Check that **4 of 36 cells match**. Click **Find Earth Analogs** and check that the result has measurements and one patch per region. Then use **AI query** with `Find terrain with slope at most 12 degrees` and check that the slope maximum becomes `12`.
 
 ## Data and coverage
 

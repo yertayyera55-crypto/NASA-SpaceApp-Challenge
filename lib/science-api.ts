@@ -10,6 +10,7 @@ export type PlanetCell = {
   samples_per_axis: number;
   measurements: ScienceMeasurement[];
   missing: string[];
+  comparableScale?: boolean;
 };
 export type EarthCandidate = {
   patch: { cell_id: string; point: PlanetPoint; bounds: Bounds };
@@ -26,6 +27,16 @@ export type Comparison = {
   sources: { id: string; title: string; url: string }[];
   limitations: string[];
 };
+
+export function bestPatchesByRegion(candidates: EarthCandidate[]) {
+  const byRegion = new Map<string, EarthCandidate>();
+  for (const candidate of candidates) {
+    const best = byRegion.get(candidate.region_id);
+    if (!best || candidate.similarity_index > best.similarity_index) byRegion.set(candidate.region_id, candidate);
+  }
+  return Array.from(byRegion.values());
+}
+
 export type EarthRegion = { id: string; name: string; country: string };
 export type Interpretation = {
   review: string[];
@@ -60,7 +71,8 @@ export function coordinates({ lat, lon }: PlanetPoint) {
 export async function scienceRequest<T>(resource: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/science/${resource}`, init);
   const payload = await response.json();
-  if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail : "The request could not be completed.");
+  if (!response.ok) throw new Error(typeof payload.detail === "string" ? payload.detail :
+    response.status === 422 ? "The science API rejected the request parameters (HTTP 422)." : `The science request failed (HTTP ${response.status}).`);
   return payload;
 }
 
